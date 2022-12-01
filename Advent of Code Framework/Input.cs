@@ -9,6 +9,11 @@ public record Input(string Raw, string[] Lines)
 {
     internal static Input FromFile(string filePath)
     {
+        if (!File.Exists(filePath))
+        {
+            throw new Exception($"Input file {filePath} not found");
+        }
+        
         string raw = File.ReadAllText(filePath);
         string[] lines = raw.Split(Environment.NewLine);
 

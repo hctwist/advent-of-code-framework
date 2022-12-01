@@ -53,35 +53,32 @@ public class SolutionRunner
                     return;
             }
         }
-        
+
         PrintUsage();
     }
 
     private static void Run(int solutionNumber)
     {
-        Solution solution = GetSolution(solutionNumber);
+        SolutionCreator solutionCreator = GetSolutionCreator(solutionNumber);
+        Input input = Input.FromFile(solutionCreator.InputFilePath);
 
-        try
+        void RunProblem(int problemNumber, Func<Solution, string> problemSelector)
         {
-            Console.WriteLine("-- Problem 1 --");
-            Console.WriteLine(solution.Problem1());
-        }
-        catch (NotImplementedException)
-        {
-            Console.WriteLine("No attempt");
+            try
+            {
+                Console.WriteLine($"-- Problem {problemNumber} --");
+                Solution solution = solutionCreator.Factory(input);
+                Console.WriteLine(problemSelector(solution));
+            }
+            catch (NotImplementedException)
+            {
+                Console.WriteLine("No attempt");
+            }
         }
 
+        RunProblem(1, s => s.Problem1());
         Console.WriteLine();
-
-        try
-        {
-            Console.WriteLine("-- Problem 2 --");
-            Console.WriteLine(solution.Problem2());
-        }
-        catch (NotImplementedException)
-        {
-            Console.WriteLine("No attempt");
-        }
+        RunProblem(2, s => s.Problem2());
     }
 
     private static void Benchmark(int? solutionNumber)
@@ -89,9 +86,9 @@ public class SolutionRunner
         throw new NotImplementedException();
     }
 
-    private static Solution GetSolution(int solutionNumber)
+    private static SolutionCreator GetSolutionCreator(int solutionNumber)
     {
-        IEnumerable<Type> solutions = Assembly.GetExecutingAssembly()
+        IEnumerable<Type> solutions = Assembly.GetEntryAssembly()!
             .GetTypes()
             .Where(type => type.IsSubclassOf(typeof(Solution)));
 
@@ -100,8 +97,8 @@ public class SolutionRunner
             SolutionAttribute solutionMetadata = GetSolutionMetadata(solutionType);
             if (solutionMetadata.Enabled && solutionMetadata.Number == solutionNumber)
             {
-                Solution solution = CreateSolution(solutionType);
-                solution.Initialise(solutionMetadata.InputFilePath);
+                Func<Input, Solution> factory = GetSolutionFactory(solutionType);
+                return new SolutionCreator(factory, solutionMetadata.InputFilePath);
             }
         }
 
@@ -113,16 +110,16 @@ public class SolutionRunner
         return type.GetCustomAttribute<SolutionAttribute>() ?? throw new Exception($"Could not find solution attribute on {type.Name}");
     }
 
-    private static Solution CreateSolution(Type type)
+    private static Func<Input, Solution> GetSolutionFactory(Type type)
     {
-        ConstructorInfo? constructor = type.GetConstructor(Array.Empty<Type>());
+        ConstructorInfo? constructor = type.GetConstructor(new[] { typeof(Input) });
 
         if (constructor == null)
         {
-            throw new Exception($"Could not resolve a valid empty constructor for {type.Name}");
+            throw new Exception($"Could not resolve a valid constructor for {type.Name} (required a single parameter of type {nameof(Input)}");
         }
 
-        return (Solution)constructor.Invoke(Array.Empty<object>());
+        return input => (Solution)constructor.Invoke(new object[] { input });
     }
 
     private static void PrintUsage()
@@ -131,4 +128,6 @@ public class SolutionRunner
         Console.WriteLine("  aoc run <solution number>");
         Console.WriteLine("  aoc benchmark [solution number]");
     }
+
+    private record SolutionCreator(Func<Input, Solution> Factory, string InputFilePath);
 }

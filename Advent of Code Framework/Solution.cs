@@ -8,18 +8,17 @@ public abstract class Solution
     /// <summary>
     /// Gets the solution input.
     /// </summary>
-    protected Input Input { get; private set; } = null!;
+    protected internal Input Input { get; }
 
-    internal void Initialise(string inputFilePath)
+    /// <summary>
+    /// Creates a new <see cref="Solution"/>.
+    /// </summary>
+    /// <param name="input">The solution input.</param>
+    protected Solution(Input input)
     {
-        if (!File.Exists(inputFilePath))
-        {
-            throw new Exception($"Could not find input file {inputFilePath}");
-        }
-
-        Input = Input.FromFile(inputFilePath);
+        Input = input;
     }
-    
+
     /// <summary>
     /// Runs the solution to problem 1.
     /// </summary>
