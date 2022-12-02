@@ -6,22 +6,20 @@
 [AttributeUsage(AttributeTargets.Class)]
 public class SolutionAttribute : Attribute
 {
-    internal int Number { get; }
+    /// <summary>
+    /// Gets or sets whether the solution is enabled.
+    /// </summary>
+    public bool Enabled { get; set; }
     
-    internal string InputFilePath { get; }
+    internal int Day { get; }
 
-    internal bool Enabled { get; }
-    
     /// <summary>
     /// Creates a new <see cref="SolutionAttribute"/>.
     /// </summary>
-    /// <param name="number">The solution number.</param>
-    /// <param name="inputFilePath">The file path to the input.</param>
-    /// <param name="enabled">Whether this solution is enabled.</param>
-    public SolutionAttribute(int number, string inputFilePath, bool enabled = true)
+    /// <param name="day">The day .</param>
+    public SolutionAttribute(int day)
     {
-        Number = number;
-        InputFilePath = inputFilePath;
-        Enabled = enabled;
+        Day = day;
+        Enabled = true;
     }
 }

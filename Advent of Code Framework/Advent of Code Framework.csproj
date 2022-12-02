@@ -5,6 +5,12 @@
         <RootNamespace>AdventOfCode.Framework</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>AdventOfCode.Framework</PackageId>
+        <Title>Advent of Code Framework</Title>
+        <Authors>Henry Twist</Authors>
+        <Description>Simple framework to bootstrap Advent of Code solutions.</Description>
+        <PackageProjectUrl>https://github.com/hctwist/advent-of-code-framework</PackageProjectUrl>
     </PropertyGroup>
 
 </Project>

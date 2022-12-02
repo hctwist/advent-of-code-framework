@@ -8,11 +8,35 @@ namespace AdventOfCode.Framework;
 /// </summary>
 public class SolutionRunner
 {
+    private readonly string? inputDirectoryPath;
+    
+    /// <summary>
+    /// Creates a new <see cref="SolutionRunner"/>.
+    /// </summary>
+    /// <param name="inputDirectoryPath">The path of the input directory.</param>
+    public SolutionRunner(string inputDirectoryPath)
+    {
+        if (!Directory.Exists(inputDirectoryPath))
+        {
+            throw new Exception($"Could not find subdirectory {inputDirectoryPath}");
+        }
+        
+        this.inputDirectoryPath = inputDirectoryPath;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="SolutionRunner"/>.
+    /// </summary>
+    public SolutionRunner()
+    {
+        inputDirectoryPath = null;
+    }
+    
     /// <summary>
     /// Runs the solution.
     /// </summary>
     /// <param name="args">The input arguments.</param>
-    public static void Run(string[] args)
+    public void Run(string[] args)
     {
         Console.WriteLine(
             @"
@@ -36,10 +60,17 @@ public class SolutionRunner
 
         if (args[0].Equals("run", StringComparison.OrdinalIgnoreCase))
         {
-            if (args.Length == 2 && int.TryParse(args[1], out int solutionNumber))
+            if (int.TryParse(args[1], out int day))
             {
-                Run(solutionNumber);
-                return;
+                switch (args.Length)
+                {
+                    case 2:
+                        Run(day, null);
+                        return;
+                    case 3 when int.TryParse(args[2], out int problem):
+                        Run(day, problem);
+                        return;
+                }
             }
         }
         else if (args[0].Equals("benchmark", StringComparison.OrdinalIgnoreCase))
@@ -47,10 +78,13 @@ public class SolutionRunner
             switch (args.Length)
             {
                 case 1:
-                    Benchmark(null);
+                    BenchmarkAll();
                     return;
-                case 2 when int.TryParse(args[1], out int solutionNumber):
-                    Benchmark(solutionNumber);
+                case 2 when int.TryParse(args[1], out int day):
+                    Benchmark(day, null);
+                    return;
+                case 3 when int.TryParse(args[1], out int day) && int.TryParse(args[2], out int problem):
+                    Benchmark(day, problem);
                     return;
             }
         }
@@ -58,30 +92,51 @@ public class SolutionRunner
         PrintUsage();
     }
 
-    private static void Run(int solutionNumber)
+    private void Run(int day, int? problem)
     {
-        SolutionCreator solutionCreator = GetSolutionCreator(solutionNumber);
-        Input input = Input.FromFile(solutionCreator.InputFilePath);
+        List<SolutionCreator> solutionCreators = GetSolutionCreators(day);
 
-        void RunProblem(int problemNumber, Func<Solution, string> problemSelector)
+        Console.WriteLine($"~ Day {day} ~");
+        Console.WriteLine();
+        foreach (SolutionCreator creator in solutionCreators)
+        {
+            Console.WriteLine($"[{creator.Name}]");
+            Console.WriteLine();
+
+            foreach (string inputFilePath in creator.InputFilePaths)
+            {
+                string simplifiedPath = string.IsNullOrEmpty(inputDirectoryPath) ?
+                    inputFilePath :
+                    Path.GetRelativePath(inputDirectoryPath, inputFilePath);
+                Console.WriteLine($"- {simplifiedPath}");
+                Console.WriteLine();
+                Run(creator.Factory, inputFilePath, problem);
+                Console.WriteLine();
+            }
+        }
+    }
+
+    private static void Run(Func<Input, Solution> factory, string inputFilePath, int? problem)
+    {
+        Input input = Input.FromFile(inputFilePath);
+
+        void RunProblem(int n, Func<Solution, string> problemSelector)
         {
             try
             {
-                Console.WriteLine($"-- Problem {problemNumber} --");
-                Console.WriteLine();
-                
-                Solution solution = solutionCreator.Factory(input);
+                Console.WriteLine($"* Problem {n} *");
+
+                Solution solution = factory(input);
 
                 Stopwatch stopwatch = new();
                 stopwatch.Start();
 
                 string result = problemSelector(solution);
-                
+
                 stopwatch.Stop();
-                
+
                 Console.WriteLine(result);
 
-                Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine($"Time taken: {stopwatch.ElapsedMilliseconds} milliseconds");
                 Console.ResetColor();
@@ -92,39 +147,74 @@ public class SolutionRunner
             }
         }
 
-        RunProblem(1, s => s.Problem1());
-        Console.WriteLine();
-        Console.WriteLine();
-        RunProblem(2, s => s.Problem2());
+        if (problem is null or 1)
+        {
+            RunProblem(1, s => s.Problem1());
+        }
+
+        if (problem is null)
+        {
+            Console.WriteLine();
+        }
+
+        if (problem is null or 2)
+        {
+            RunProblem(2, s => s.Problem2());
+        }
     }
 
-    private static void Benchmark(int? solutionNumber)
+    private static void Benchmark(int day, int? problem)
     {
         throw new NotImplementedException();
     }
 
-    private static SolutionCreator GetSolutionCreator(int solutionNumber)
+    private static void BenchmarkAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    private List<SolutionCreator> GetSolutionCreators(int day)
     {
         IEnumerable<Type> solutions = Assembly.GetEntryAssembly()!
             .GetTypes()
             .Where(type => type.IsSubclassOf(typeof(Solution)));
 
+        List<SolutionCreator> creators = new();
+
         foreach (Type solutionType in solutions)
         {
-            SolutionAttribute solutionMetadata = GetSolutionMetadata(solutionType);
-            if (solutionMetadata.Enabled && solutionMetadata.Number == solutionNumber)
+            SolutionMetadata solutionMetadata = GetSolutionMetadata(solutionType);
+            if (solutionMetadata.SolutionAttribute.Day == day &&
+                solutionMetadata.SolutionAttribute.Enabled &&
+                solutionMetadata.SolutionInputAttributes.Any(inputAttribute => inputAttribute.Enabled))
             {
                 Func<Input, Solution> factory = GetSolutionFactory(solutionType);
-                return new SolutionCreator(factory, solutionMetadata.InputFilePath);
+                creators.Add(
+                    new SolutionCreator(
+                        solutionType.Name,
+                        factory,
+                        solutionMetadata.SolutionInputAttributes
+                            .Where(inputAttribute => inputAttribute.Enabled)
+                            .Select(inputAttribute => inputAttribute.Path)
+                            .Select(path => string.IsNullOrEmpty(inputDirectoryPath) ? path : Path.Combine(inputDirectoryPath, path))
+                            .ToArray()));
             }
         }
 
-        throw new Exception($"Could not find solution class for solution {solutionNumber}");
+        return creators.Count > 0 ? creators : throw new Exception($"Could not find any solution classes for day {day}");
     }
 
-    private static SolutionAttribute GetSolutionMetadata(Type type)
+    private static SolutionMetadata GetSolutionMetadata(Type type)
     {
-        return type.GetCustomAttribute<SolutionAttribute>() ?? throw new Exception($"Could not find solution attribute on {type.Name}");
+        SolutionAttribute solutionAttribute = type.GetCustomAttribute<SolutionAttribute>() ?? throw new Exception($"Could not find solution attribute on {type.Name}");
+
+        SolutionInputAttribute[] solutionInputAttributes = type.GetCustomAttributes<SolutionInputAttribute>().ToArray();
+        if (solutionInputAttributes.Length == 0)
+        {
+            throw new Exception($"Could not find a solution input attribute on {type.Name}");
+        }
+
+        return new SolutionMetadata(solutionAttribute, solutionInputAttributes);
     }
 
     private static Func<Input, Solution> GetSolutionFactory(Type type)
@@ -141,10 +231,18 @@ public class SolutionRunner
 
     private static void PrintUsage()
     {
-        Console.WriteLine("Usage:");
-        Console.WriteLine("  aoc run <solution number>");
-        Console.WriteLine("  aoc benchmark [solution number]");
+        Console.WriteLine("Invalid arguments. Expected arguments of the form:");
+        Console.WriteLine("  run <day> [problem]");
+        Console.WriteLine("  benchmark [day] [problem]");
+        Console.WriteLine("Examples:");
+        Console.WriteLine("  run 1");
+        Console.WriteLine("  run 25 2");
+        Console.WriteLine("  benchmark");
+        Console.WriteLine("  benchmark 12 1");
+        Console.WriteLine("  benchmark 24 2");
     }
 
-    private record SolutionCreator(Func<Input, Solution> Factory, string InputFilePath);
+    private record SolutionCreator(string Name, Func<Input, Solution> Factory, string[] InputFilePaths);
+
+    private record SolutionMetadata(SolutionAttribute SolutionAttribute, SolutionInputAttribute[] SolutionInputAttributes);
 }
