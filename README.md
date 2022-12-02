@@ -9,11 +9,11 @@ SolutionRunner.Run(args);
 ```
 
 This can be run in two modes:
-#### "run &lt;day number&gt; [problem number]"
-Runs the solution associated with a specific day. If a problem number is specified then only that problem will run. Otherwise both problems will be run.
+#### "run &lt;day&gt; [problem]"
+Runs the solution associated with a specific day. If a problem is specified then only that problem will run. Otherwise both problems will be run.
 
-#### "benchmark [day number] [problem number]"
-Runs a benchmark for the specified day. If no day is provided, then a benchmark will be run for all solutions. If a problem number is specified then only that problem will run. Otherwise both problems will be run.
+#### "benchmark [day] [problem]"
+Runs a benchmark for the specified day. If no day is provided, then a benchmark will be run for all solutions. If a problem is specified then only that problem will run. Otherwise both problems will be run.
 
 ## Solutions
 
@@ -52,8 +52,8 @@ Each *problem* run instantiates a new solution, so state can't be shared between
 
 Benchmarking includes the runtime of the constructor as well as the specific problem, however it doesn't include reading input files.
 
-### Disabling Solutions/Problems
+### Disabling Solutions, Problems and Inputs
 
-Solutions can be disabled by passing in `false` to the `Solution` attribute, which means it will be ignored for runs and benchmarks.
+Solutions can be disabled by passing in `false` to the `Solution` attribute, which means it will be ignored for runs and benchmarks. This is also the case with inputs which can be disabled via the `SolutionInput` attribute.
 
 A problem that throws a `NotImplementedException` is not considered as having failed and will not contribute to the benchmarks.
