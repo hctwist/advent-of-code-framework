@@ -9,7 +9,7 @@ new SolutionRunner().Run(args);
 ```
 This takes an optional argument which specifies a subdirectory which contains the input files. If specified, relative paths from a `SolutionInput` attribute will be resolved relative to this directory.
 
-This can be run in two modes:
+The passed in arguments can define two modes:
 #### "run &lt;day&gt; [problem]"
 Runs the solution associated with a specific day. If a problem is specified then only that problem will run. Otherwise both problems will be run.
 
@@ -55,6 +55,13 @@ Benchmarking includes the runtime of the constructor as well as the specific pro
 
 ### Disabling Solutions, Problems and Inputs
 
-Solutions can be disabled by passing in `false` to the `Solution` attribute, which means it will be ignored for runs and benchmarks. This is also the case with inputs which can be disabled via the `SolutionInput` attribute.
+Solutions can be disabled by passing in `false` to the `Solution` attribute, which means it will be ignored for runs and benchmarks. This is also the case with inputs which can be disabled via the `SolutionInput` attribute:
 
-A problem that throws a `NotImplementedException` is not considered as having failed and will not contribute to the benchmarks.
+```csharp
+[Solution(1, Enabled = true)]
+[SolutionInput("Input1.test.txt", Enabled = false)]
+[SolutionInput("Input1.txt")]
+public class MySolution : Solution
+```
+
+A problem that throws a `NotImplementedException` is not considered as having failed and therefore will not contribute to the benchmarks, or stop the current run.
