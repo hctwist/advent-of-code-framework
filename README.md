@@ -1,6 +1,6 @@
 # Advent of Code Framework
 
-Simple framework to run solutions in without having to worry about boilderplate.
+Simple framework to run Advent of Code solutions.
 
 ## Setup
 To kick of the process, `SolutionRunner.Run` needs to be called.
