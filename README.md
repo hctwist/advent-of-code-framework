@@ -3,7 +3,7 @@
 Simple framework to bootstrap Advent of Code solutions.
 
 ## Setup
-To kick of the process, `Run` needs to be called on a `SolutionRunner`.
+To kick off the process, `Run` needs to be called on a `SolutionRunner`.
 ```csharp
 SolutionRunner runner = new();
 runner.Run(args);
