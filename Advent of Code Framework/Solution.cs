@@ -8,7 +8,7 @@ public abstract class Solution
     /// <summary>
     /// Gets the solution input.
     /// </summary>
-    protected internal Input Input { get; }
+    protected Input Input { get; }
 
     /// <summary>
     /// Creates a new <see cref="Solution"/>.
