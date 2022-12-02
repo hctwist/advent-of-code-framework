@@ -52,7 +52,7 @@ Each *problem* run instantiates a new solution, so state can't be shared between
 
 Benchmarking includes the runtime of the constructor as well as the specific problem, however it doesn't include reading input files.
 
-### Disabling Solutions
+### Disabling Solutions/Problems
 
 Solutions can be disabled by passing in `false` to the `Solution` attribute, which means it will be ignored for runs and benchmarks.
 
