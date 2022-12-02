@@ -3,10 +3,11 @@
 Simple framework to run solutions in without having to worry about boilderplate.
 
 ## Setup
-To kick of the process, run
+To kick of the process, `SolutionRunner.Run` needs to be called.
 ```csharp
-SolutionRunner.Run(args);
+new SolutionRunner().Run(args);
 ```
+This takes an optional argument which specifies a subdirectory which contains the input files. If specified, relative paths from a `SolutionInput` attribute will be resolved relative to this directory.
 
 This can be run in two modes:
 #### "run &lt;day&gt; [problem]"
