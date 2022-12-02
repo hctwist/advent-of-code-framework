@@ -15,7 +15,7 @@ Runs the solution associated with a specific day. This will run both problems.
 #### "benchmark [day number]"
 Runs a benchmark for the specified day. If no day is provided, then a benchmark will be run for all solutions. This will run both problems.
 
-## Adding Solutions
+## Solutions
 
 A solution needs to satisfy four constrains: inheriting from `Solution`, having a constructor which takes in a single parameter of type `Input`, having a single `Solution` attribute, having at least one `SolutionInput` attribute.
 
