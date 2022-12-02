@@ -9,7 +9,7 @@ SolutionRunner.Run(args);
 ```
 
 This can be run in two modes:
-#### "run <day number>"
+#### "run &lt;day number&gt;"
 Runs the solution associated with a specific day. This will run both problems.
 
 #### "benchmark [day number]"
@@ -42,4 +42,12 @@ public class MySolution : Solution
 }
 ```
 
+### Notes
+
+Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor).
+
+Each *problem* run instantiates a solution, so state can't be shared between runs.
+
 The runner will pick up the first solution that matches the day number, so multiple solutions for a single day will be ignored. To direct the runner to a specific solution you can disable solutions by passing in `false` to the `Solution` attribute.
+
+Benchmarking includes the runtime of the constructor as well as the specific problem, however it doesn't include reading input files.
