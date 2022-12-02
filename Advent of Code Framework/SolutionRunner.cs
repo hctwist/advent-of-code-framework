@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 
 namespace AdventOfCode.Framework;
 
@@ -67,8 +68,23 @@ public class SolutionRunner
             try
             {
                 Console.WriteLine($"-- Problem {problemNumber} --");
+                Console.WriteLine();
+                
                 Solution solution = solutionCreator.Factory(input);
-                Console.WriteLine(problemSelector(solution));
+
+                Stopwatch stopwatch = new();
+                stopwatch.Start();
+
+                string result = problemSelector(solution);
+                
+                stopwatch.Stop();
+                
+                Console.WriteLine(result);
+
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine($"Time taken: {stopwatch.ElapsedMilliseconds} milliseconds");
+                Console.ResetColor();
             }
             catch (NotImplementedException)
             {
@@ -77,6 +93,7 @@ public class SolutionRunner
         }
 
         RunProblem(1, s => s.Problem1());
+        Console.WriteLine();
         Console.WriteLine();
         RunProblem(2, s => s.Problem2());
     }
