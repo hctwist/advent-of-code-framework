@@ -3,13 +3,14 @@
 Simple framework to bootstrap Advent of Code solutions.
 
 ## Setup
-To kick of the process, `SolutionRunner.Run` needs to be called.
+To kick of the process, `Run` needs to be called on a `SolutionRunner`.
 ```csharp
-new SolutionRunner().Run(args);
+SolutionRunner runner = new();
+runner.Run(args);
 ```
-This takes an optional argument which specifies a subdirectory which contains the input files. If specified, relative paths from a `SolutionInput` attribute will be resolved relative to this directory.
+The `SolutionRunner` itself takes an optional argument which specifies a subdirectory which contains the input files. If specified, relative paths from a `SolutionInput` attribute will be resolved relative to this directory.
 
-The passed in arguments can define two modes:
+The arguments passed to `Run` can define two modes:
 #### "run &lt;day&gt; [problem]"
 Runs the solution associated with a specific day. If a problem is specified then only that problem will run. Otherwise both problems will be run.
 
