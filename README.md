@@ -60,10 +60,12 @@ public class MySolution : Solution
 
     protected override string? Problem1()
     {
+        return null;
     }
 
     protected override string? Problem2()
     {
+        return null;
     }
 }
 ```
