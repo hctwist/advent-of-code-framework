@@ -33,7 +33,7 @@ public class SolutionRunner
     }
     
     /// <summary>
-    /// Runs the solution.
+    /// Runs solutions.
     /// </summary>
     /// <param name="args">The input arguments.</param>
     public void Run(string[] args)
@@ -65,10 +65,10 @@ public class SolutionRunner
                 switch (args.Length)
                 {
                     case 2:
-                        Run(day, null);
+                        Solve(day);
                         return;
                     case 3 when int.TryParse(args[2], out int problem):
-                        Run(day, problem);
+                        Solve(day, problem);
                         return;
                 }
             }
@@ -78,10 +78,10 @@ public class SolutionRunner
             switch (args.Length)
             {
                 case 1:
-                    BenchmarkAll();
+                    Benchmark();
                     return;
                 case 2 when int.TryParse(args[1], out int day):
-                    Benchmark(day, null);
+                    Benchmark(day);
                     return;
                 case 3 when int.TryParse(args[1], out int day) && int.TryParse(args[2], out int problem):
                     Benchmark(day, problem);
@@ -92,8 +92,31 @@ public class SolutionRunner
         PrintUsage();
     }
 
-    private void Run(int day, int? problem)
+    private static void PrintUsage()
     {
+        Console.WriteLine("Invalid arguments. Expected arguments of the form:");
+        Console.WriteLine("  run <day> [problem]");
+        Console.WriteLine("  benchmark [day] [problem]");
+        Console.WriteLine("Examples:");
+        Console.WriteLine("  run 1");
+        Console.WriteLine("  run 25 2");
+        Console.WriteLine("  benchmark");
+        Console.WriteLine("  benchmark 12 1");
+        Console.WriteLine("  benchmark 24 2");
+    }
+
+    /// <summary>
+    /// Runs solutions in solve mode.
+    /// </summary>
+    /// <param name="day">The day to solve.</param>
+    /// <param name="problem">The problem to solve. If this is null then both problems will be solved.</param>
+    public void Solve(int day, int? problem = null)
+    {
+        if (problem is not null && problem != 1 && problem != 2)
+        {
+            throw new ArgumentException("Problem needs to be either '1' or '2'", nameof(problem));
+        }
+        
         List<SolutionCreator> solutionCreators = GetSolutionCreators(day);
 
         Console.WriteLine($"~ Day {day} ~");
@@ -110,13 +133,13 @@ public class SolutionRunner
                     Path.GetRelativePath(inputDirectoryPath, inputFilePath);
                 Console.WriteLine($"- {simplifiedPath}");
                 Console.WriteLine();
-                Run(creator.Factory, inputFilePath, problem);
+                Solve(creator.Factory, inputFilePath, problem);
                 Console.WriteLine();
             }
         }
     }
 
-    private static void Run(Func<Input, Solution> factory, string inputFilePath, int? problem)
+    private static void Solve(Func<Input, Solution> factory, string inputFilePath, int? problem)
     {
         Input input = Input.FromFile(inputFilePath);
 
@@ -163,12 +186,12 @@ public class SolutionRunner
         }
     }
 
-    private static void Benchmark(int day, int? problem)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static void BenchmarkAll()
+    /// <summary>
+    /// Runs solutions in benchmark mode.
+    /// </summary>
+    /// <param name="day">The day to benchmark. If this is null, then all days will be benchmarked.</param>
+    /// <param name="problem">The problem to benchmark. If this is null, then both problems will be benchmarked.</param>
+    public static void Benchmark(int? day = null, int? problem = null)
     {
         throw new NotImplementedException();
     }
@@ -227,19 +250,6 @@ public class SolutionRunner
         }
 
         return input => (Solution)constructor.Invoke(new object[] { input });
-    }
-
-    private static void PrintUsage()
-    {
-        Console.WriteLine("Invalid arguments. Expected arguments of the form:");
-        Console.WriteLine("  run <day> [problem]");
-        Console.WriteLine("  benchmark [day] [problem]");
-        Console.WriteLine("Examples:");
-        Console.WriteLine("  run 1");
-        Console.WriteLine("  run 25 2");
-        Console.WriteLine("  benchmark");
-        Console.WriteLine("  benchmark 12 1");
-        Console.WriteLine("  benchmark 24 2");
     }
 
     private record SolutionCreator(string Name, Func<Input, Solution> Factory, string[] InputFilePaths);
