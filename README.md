@@ -8,7 +8,7 @@ The framework supports two run modes:
 ### Solve Mode
 Runs solutions and outputs the result from the problems.
 
-### Benchmark Mode
+### Benchmark Mode [In Development]
 Benchmarks solution problems.
 
 ## Setup
