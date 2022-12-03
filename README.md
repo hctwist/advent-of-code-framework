@@ -58,11 +58,11 @@ public class MySolution : Solution
     {
     }
 
-    protected override string Problem1()
+    protected override string? Problem1()
     {
     }
 
-    protected override string Problem2()
+    protected override string? Problem2()
     {
     }
 }
@@ -90,7 +90,7 @@ Solutions can be disabled by passing in `false` to the `Solution` attribute, whi
 public class MySolution : Solution
 ```
 
-A problem that throws a `NotImplementedException` is not considered as having failed and therefore will not contribute to the benchmarks, or stop the current run.
+A problem that throws a `NotImplementedException` or returns `null` is not considered as having failed and therefore will not contribute to the benchmarks, or stop the current run.
 
 ### Pitfalls
 
