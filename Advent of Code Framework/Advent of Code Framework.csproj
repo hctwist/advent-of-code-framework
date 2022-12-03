@@ -11,7 +11,7 @@
         <Authors>Henry Twist</Authors>
         <Description>Simple framework to bootstrap Advent of Code solutions.</Description>
         <PackageProjectUrl>https://github.com/hctwist/advent-of-code-framework</PackageProjectUrl>
-        <PackageVersion>1.1.1</PackageVersion>
+        <PackageVersion>1.1.2</PackageVersion>
     </PropertyGroup>
 
 </Project>
