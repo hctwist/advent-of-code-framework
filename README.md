@@ -94,4 +94,4 @@ A problem that throws a `NotImplementedException` is not considered as having fa
 
 ### Pitfalls
 
-Input files paths should be specified relative to the output directory (or usually relative to the project root). For this to work the files need to be setup to copy over when building (https://social.technet.microsoft.com/wiki/contents/articles/53248.visual-studio-copying-files-to-debug-or-release-folder.aspx).
+Input file paths should be specified relative to the output directory (or usually relative to the project root). For this to work the files need to be setup to copy over when building (https://social.technet.microsoft.com/wiki/contents/articles/53248.visual-studio-copying-files-to-debug-or-release-folder.aspx).
