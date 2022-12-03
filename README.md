@@ -2,20 +2,44 @@
 
 Simple framework to bootstrap Advent of Code solutions.
 
+## Modes
+The framework supports two run modes:
+
+### Solve Mode
+This runs solutions and outputs the result from the problems.
+
+### Benchmark Mode
+This benchmarks solution problems. The benchmark time includes constructor and method time.
+
 ## Setup
-To kick off the process, `Run` needs to be called on a `SolutionRunner`.
+The entry point to the framework is the `SolutionRunner`.
 ```csharp
 SolutionRunner runner = new();
-runner.Run(args);
 ```
 The `SolutionRunner` itself takes an optional argument which specifies a subdirectory which contains the input files. If specified, relative paths from a `SolutionInput` attribute will be resolved relative to this directory.
 
-The arguments passed to `Run` can define two modes:
-#### "run &lt;day&gt; [problem]"
-Runs the solution associated with a specific day. If a problem is specified then only that problem will run. Otherwise both problems will be run.
+You can then run the solution runner directly in one of the two modes:
+```csharp
+runner.Solve(1);
+runner.Benchmark();
+```
+Extra arguments can be passed to restrict the runs (ie. to specific days or problems).
 
-#### "benchmark [day] [problem]"
-Runs a benchmark for the specified day. If no day is provided, then a benchmark will be run for all solutions. If a problem is specified then only that problem will run. Otherwise both problems will be run.
+There is also an option intended to work with the command line:
+
+```csharp
+runner.Run(args);
+```
+
+The arguments passed to `Run` can define the two modes as follows:
+```
+run <day> [problem]
+benchmark [day] [problem]
+```
+for example:
+```csharp
+runner.Run(new string[] { "run", "1", "1" });
+```
 
 ## Solutions
 
