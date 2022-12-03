@@ -13,9 +13,9 @@ public record Input(string Raw, string[] Lines)
         {
             throw new Exception($"Input file {filePath} not found");
         }
-        
+
         string raw = File.ReadAllText(filePath);
-        string[] lines = raw.Split(Environment.NewLine);
+        string[] lines = raw.Split(new[] { "\n", "\r\n" }, StringSplitOptions.None);
 
         return new Input(raw, lines);
     }
