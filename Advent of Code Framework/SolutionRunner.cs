@@ -38,20 +38,6 @@ public class SolutionRunner
     /// <param name="args">The input arguments.</param>
     public void Run(string[] args)
     {
-        Console.WriteLine(
-            @"
-   .-.                                                   \ /
-  ( (                                |                  - * -
-   '-`                              -+-                  / \
-            \            o          _|_          \
-            ))          }^{        /___\         ))
-          .-#-----.     /|\     .---'-'---.    .-#-----.
-     ___ /_________\   //|\\   /___________\  /_________\  
-    /___\ |[] _ []|    //|\\    | A /^\ A |    |[] _ []| _.O,_
-....|'#'|.|  |*|  |...///|\\\...|   |'|   |....|  |*|  |..(^)....");
-        Console.WriteLine();
-        Console.WriteLine();
-
         if (args.Length == 0)
         {
             PrintUsage();
@@ -112,6 +98,8 @@ public class SolutionRunner
     /// <param name="problem">The problem to solve. If this is null then both problems will be solved.</param>
     public void Solve(int day, int? problem = null)
     {
+        PrintIntro();
+        
         if (problem is not null && problem != 1 && problem != 2)
         {
             throw new ArgumentException("Problem needs to be either '1' or '2'", nameof(problem));
@@ -143,7 +131,7 @@ public class SolutionRunner
     {
         Input input = Input.FromFile(inputFilePath);
 
-        void RunProblem(int n, Func<Solution, string> problemSelector)
+        void RunProblem(int n, Func<Solution, string?> problemSelector)
         {
             try
             {
@@ -154,7 +142,13 @@ public class SolutionRunner
                 Stopwatch stopwatch = new();
                 stopwatch.Start();
 
-                string result = problemSelector(solution);
+                string? result = problemSelector(solution);
+
+                if (result is null)
+                {
+                    Console.WriteLine("No attempt");
+                    return;
+                }
 
                 stopwatch.Stop();
 
@@ -193,7 +187,25 @@ public class SolutionRunner
     /// <param name="problem">The problem to benchmark. If this is null, then both problems will be benchmarked.</param>
     public static void Benchmark(int? day = null, int? problem = null)
     {
+        PrintIntro();
         throw new NotImplementedException();
+    }
+
+    private static void PrintIntro()
+    {
+        Console.WriteLine(
+            @"
+   .-.                                                   \ /
+  ( (                                |                  - * -
+   '-`                              -+-                  / \
+            \            o          _|_          \
+            ))          }^{        /___\         ))
+          .-#-----.     /|\     .---'-'---.    .-#-----.
+     ___ /_________\   //|\\   /___________\  /_________\  
+    /___\ |[] _ []|    //|\\    | A /^\ A |    |[] _ []| _.O,_
+....|'#'|.|  |*|  |...///|\\\...|   |'|   |....|  |*|  |..(^)....");
+        Console.WriteLine();
+        Console.WriteLine();
     }
 
     private List<SolutionCreator> GetSolutionCreators(int day)

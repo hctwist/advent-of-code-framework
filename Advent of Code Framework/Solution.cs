@@ -22,12 +22,12 @@ public abstract class Solution
     /// <summary>
     /// Runs the solution to problem 1.
     /// </summary>
-    /// <returns>The result.</returns>
-    protected internal abstract string Problem1();
+    /// <returns>The result. If this is null then this won't be considered as an attempt.</returns>
+    protected internal abstract string? Problem1();
     
     /// <summary>
     /// Runs the solution to problem 2.
     /// </summary>
-    /// <returns>The result.</returns>
-    protected internal abstract string Problem2();
+    /// <returns>The result. If this is null then this won't be considered as an attempt.</returns>
+    protected internal abstract string? Problem2();
 }
