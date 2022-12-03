@@ -6,10 +6,10 @@ Simple framework to bootstrap Advent of Code solutions.
 The framework supports two run modes:
 
 ### Solve Mode
-This runs solutions and outputs the result from the problems.
+Runs solutions and outputs the result from the problems.
 
 ### Benchmark Mode
-This benchmarks solution problems. The benchmark time includes constructor and method time.
+Benchmarks solution problems.
 
 ## Setup
 The entry point to the framework is the `SolutionRunner`.
@@ -43,7 +43,7 @@ runner.Run(new string[] { "run", "1", "1" });
 
 ## Solutions
 
-A solution needs to satisfy four constrains: inheriting from `Solution`, having a constructor which takes in a single parameter of type `Input`, having a single `Solution` attribute, having at least one `SolutionInput` attribute.
+A solution needs to satisfy four constrains: inheriting from `Solution`, having a constructor which takes in a single parameter of type `Input`, having a single `Solution` attribute, and having at least one `SolutionInput` attribute.
 
 A solution should then look something like this:
 
@@ -75,7 +75,6 @@ Input is read by the framework and can be accessed in the solution via the `Inpu
 ### Process
 
 Each *problem* run instantiates a new solution, so state can't be shared between runs.
-
 Benchmarking includes the runtime of the constructor as well as the specific problem, however it doesn't include reading input files.
 
 ### Disabling Solutions, Problems and Inputs
@@ -90,3 +89,7 @@ public class MySolution : Solution
 ```
 
 A problem that throws a `NotImplementedException` is not considered as having failed and therefore will not contribute to the benchmarks, or stop the current run.
+
+### Pitfalls
+
+Input files paths should be specified relative to the output directory (or usually relative to the project root). For this to work the files need to be setup to copy over when building (https://social.technet.microsoft.com/wiki/contents/articles/53248.visual-studio-copying-files-to-debug-or-release-folder.aspx).
