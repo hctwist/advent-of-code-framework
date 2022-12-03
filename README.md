@@ -68,6 +68,8 @@ public class MySolution : Solution
 }
 ```
 
+The solutions to the problems should be returned from `Problem1` and `Problem2` as strings.
+
 ### Input
 
 Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor).
