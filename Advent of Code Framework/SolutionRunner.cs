@@ -58,7 +58,7 @@ public class SolutionRunner
             return;
         }
 
-        if (args[0].Equals("run", StringComparison.OrdinalIgnoreCase))
+        if (args[0].Equals("solve", StringComparison.OrdinalIgnoreCase))
         {
             if (int.TryParse(args[1], out int day))
             {
@@ -95,11 +95,11 @@ public class SolutionRunner
     private static void PrintUsage()
     {
         Console.WriteLine("Invalid arguments. Expected arguments of the form:");
-        Console.WriteLine("  run <day> [problem]");
+        Console.WriteLine("  solve <day> [problem]");
         Console.WriteLine("  benchmark [day] [problem]");
         Console.WriteLine("Examples:");
-        Console.WriteLine("  run 1");
-        Console.WriteLine("  run 25 2");
+        Console.WriteLine("  solve 1");
+        Console.WriteLine("  solve 25 2");
         Console.WriteLine("  benchmark");
         Console.WriteLine("  benchmark 12 1");
         Console.WriteLine("  benchmark 24 2");
