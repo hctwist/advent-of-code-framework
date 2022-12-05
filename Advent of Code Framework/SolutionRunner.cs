@@ -99,12 +99,35 @@ public class SolutionRunner
     public void Solve(int day, int? problem = null)
     {
         PrintIntro();
-        
+
+        SolveSingle(day, problem);
+    }
+
+    public void SolveAll()
+    {
+        foreach (var day in Enumerable.Range(1, 25))
+        {
+            if (TryGetSolutionCreators(day, out var solutionCreators))
+            {
+                SolveSingle(day);
+            }
+            else
+            {
+                Console.WriteLine($"~ Day {day} ~");
+                Console.WriteLine();
+                Console.WriteLine($"No solutions found for day {day}");
+                Console.WriteLine();
+            }
+        }
+    }
+
+    private void SolveSingle(int day, int? problem = null)
+    {
         if (problem is not null && problem != 1 && problem != 2)
         {
             throw new ArgumentException("Problem needs to be either '1' or '2'", nameof(problem));
         }
-        
+
         List<SolutionCreator> solutionCreators = GetSolutionCreators(day);
 
         Console.WriteLine($"~ Day {day} ~");
@@ -121,62 +144,75 @@ public class SolutionRunner
                     Path.GetRelativePath(inputDirectoryPath, inputFilePath);
                 Console.WriteLine($"- {simplifiedPath}");
                 Console.WriteLine();
-                Solve(creator.Factory, inputFilePath, problem);
-                Console.WriteLine();
+                var results = Solve(creator.Factory, inputFilePath, problem);
+                foreach (var result in results)
+                {
+                    Output(result);
+                    Console.WriteLine();
+                }
             }
         }
     }
 
-    private static void Solve(Func<Input, Solution> factory, string inputFilePath, int? problem)
+    private void Output(ProblemResult problemResult)
+    {
+        Console.WriteLine($"* Problem {problemResult.ProblemNumber} *");
+
+        if (problemResult.Result is null)
+        {
+            Console.WriteLine("No attempt");
+        }
+
+        Console.WriteLine(problemResult.Result);
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine($"Time taken: {problemResult.ElapsedMilliseconds} milliseconds");
+        Console.ResetColor();
+    }
+
+    private record ProblemResult
+    {
+        public int ProblemNumber { get; init; }
+        public string? Result { get; init; }
+        public long ElapsedMilliseconds { get; init; } 
+    }
+
+    private static IEnumerable<ProblemResult> Solve(Func<Input, Solution> factory, string inputFilePath, int? problem)
     {
         Input input = Input.FromFile(inputFilePath);
 
-        void RunProblem(int n, Func<Solution, string?> problemSelector)
+        ProblemResult RunProblem(int n, Func<Solution, string?> problemSelector)
         {
+            Stopwatch stopwatch = new();
+            string? result = null;
             try
             {
-                Console.WriteLine($"* Problem {n} *");
-
                 Solution solution = factory(input);
 
-                Stopwatch stopwatch = new();
                 stopwatch.Start();
 
-                string? result = problemSelector(solution);
-
-                if (result is null)
-                {
-                    Console.WriteLine("No attempt");
-                    return;
-                }
-
-                stopwatch.Stop();
-
-                Console.WriteLine(result);
-
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine($"Time taken: {stopwatch.ElapsedMilliseconds} milliseconds");
-                Console.ResetColor();
+                result = problemSelector(solution);
             }
             catch (NotImplementedException)
             {
-                Console.WriteLine("No attempt");
+                //No special handling needed here.
             }
+            return new ProblemResult()
+            {
+                ProblemNumber = n,
+                Result = result,
+                ElapsedMilliseconds = stopwatch.ElapsedMilliseconds,
+            };
         }
 
         if (problem is null or 1)
         {
-            RunProblem(1, s => s.Problem1());
-        }
-
-        if (problem is null)
-        {
-            Console.WriteLine();
+            yield return RunProblem(1, s => s.Problem1());
         }
 
         if (problem is null or 2)
         {
-            RunProblem(2, s => s.Problem2());
+            yield return RunProblem(2, s => s.Problem2());
         }
     }
 
@@ -210,6 +246,15 @@ public class SolutionRunner
 
     private List<SolutionCreator> GetSolutionCreators(int day)
     {
+        if (!TryGetSolutionCreators(day, out var creators))
+        {
+            throw new Exception($"Could not find any solution classes for day {day}");
+        }
+        return creators;
+    }
+
+    private bool TryGetSolutionCreators(int day, out List<SolutionCreator>? solutionCreators)
+    {
         IEnumerable<Type> solutions = Assembly.GetEntryAssembly()!
             .GetTypes()
             .Where(type => type.IsSubclassOf(typeof(Solution)));
@@ -236,7 +281,13 @@ public class SolutionRunner
             }
         }
 
-        return creators.Count > 0 ? creators : throw new Exception($"Could not find any solution classes for day {day}");
+        if (creators.Count > 0)
+        {
+            solutionCreators = creators;
+            return true;
+        }
+        solutionCreators = null;
+        return false;
     }
 
     private static SolutionMetadata GetSolutionMetadata(Type type)
