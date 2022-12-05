@@ -11,6 +11,11 @@ public class SolutionInputAttribute : Attribute
     /// </summary>
     public bool Enabled { get; set; }
     
+    /// <summary>
+    /// Gets or sets whether this input should be used for benchmarking.
+    /// </summary>
+    public bool Benchmark { get; set; }
+    
     internal string Path { get; }
     
     /// <summary>
@@ -21,5 +26,6 @@ public class SolutionInputAttribute : Attribute
     {
         Path = path;
         Enabled = true;
+        Benchmark = false;
     }
 }

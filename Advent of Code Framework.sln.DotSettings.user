@@ -1,0 +1,22 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=378d9ec7_002D060d_002D43e5_002D8189_002Df97efdde7f08/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestBenchmark #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::4030A972-37E2-47EB-AB99-6ABCAD3EC850::net6.0::AdventOfCode.Framework.Tests.Tests.TestBenchmark&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=604dd494_002D728f_002D498e_002Da83a_002Dab76b8b57313/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestBenchmark #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::4030A972-37E2-47EB-AB99-6ABCAD3EC850::net6.0::AdventOfCode.Framework.Tests.Tests.TestBenchmark&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7d47f511_002D68fa_002D40d7_002D8a0e_002D9af194041a39/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestBenchmark #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::4030A972-37E2-47EB-AB99-6ABCAD3EC850::net6.0::AdventOfCode.Framework.Tests.Tests.TestBenchmark&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=fc847ed1_002Deb73_002D4845_002Db509_002D4bc4d9ec1c81/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestBenchmark" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::4030A972-37E2-47EB-AB99-6ABCAD3EC850::net6.0::AdventOfCode.Framework.Tests.Tests.TestBenchmark&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::4030A972-37E2-47EB-AB99-6ABCAD3EC850::net6.0::AdventOfCode.Framework.Tests.Tests.TestSolve&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
