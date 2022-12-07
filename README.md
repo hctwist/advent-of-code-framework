@@ -11,37 +11,7 @@ Runs solutions and outputs the result from the problems.
 ### Benchmark Mode [In Development]
 Benchmarks solution problems.
 
-## Setup
-The entry point to the framework is the `SolutionRunner`.
-```csharp
-SolutionRunner runner = new();
-```
-The `SolutionRunner` itself takes an optional argument which specifies a subdirectory which contains the input files. If specified, relative paths from a `SolutionInput` attribute will be resolved relative to this directory.
-
-You can then run the solution runner directly in one of the two modes:
-```csharp
-runner.Solve(1);
-runner.Benchmark();
-```
-Extra arguments can be passed to restrict the runs (ie. to specific days or problems).
-
-There is also an option intended to work with the command line:
-
-```csharp
-runner.Run(args);
-```
-
-The arguments passed to `Run` can define the two modes as follows:
-```
-run <day> [problem]
-benchmark [day] [problem]
-```
-for example:
-```csharp
-runner.Run(new string[] { "run", "1", "1" });
-```
-
-## Solutions
+## Setting Up Solutions
 
 A solution needs to satisfy four constrains: inheriting from `Solution`, having a constructor which takes in a single parameter of type `Input`, having a single `Solution` attribute, and having at least one `SolutionInput` attribute.
 
@@ -72,6 +42,65 @@ public class MySolution : Solution
 
 The solutions to the problems should be returned from `Problem1` and `Problem2` as strings.
 
+## Running
+The entry point to the framework is the `SolutionRunner`.
+```csharp
+SolutionRunner runner = new();
+```
+
+You can then run the solution runner directly in one of the two modes and for a specific combination of days/problems.
+```csharp
+// Solve mode
+runner.Solve(1, Problem.Problem2);
+runner.Solve(1);
+runner.SolveLatest();
+runner.SolveAll();
+
+// Benchmark mode
+runner.Benchmark(1, Problem.Problem2);
+runner.Benchmark(1);
+runner.BenchmarkAll();
+```
+
+There is also an option intended to work with the command line:
+
+```csharp
+runner.Run(args);
+```
+
+The arguments passed to `Run` can define the two modes as follows:
+```
+run <day> [problem]
+benchmark <day> <problem>
+```
+for example:
+```csharp
+runner.Run(new string[] { "run", "1", "1" });
+```
+*Note that `SolveLatest` is not supported with run arguments.*
+
+## Solution Options
+
+### Solution Attribute
+
+The solution attribute takes in the day that the solution corresponds to, and optionally whether the solution is enabled.
+
+```csharp
+[Solution(1, Enabled = true)]
+```
+
+### Solution Input Attribute
+
+The solution input attribute takes in a path to an input file to run the solution for. This is by default resolved from the base directory of the project but this can be changed via the `SolutionRunner` options. Optional properties can be set to enable/disable the input, specify that the input is only relevant to a single problem and enable benchmarking.
+
+```csharp
+[SolutionInput("Input.txt", Enabled = true, Benchmark = true, Problem = Problem.All)
+```
+
+*Note that in benchmark mode, only inputs marked with `Benchmark = true` will be considered. This is `false` by default.
+
+## Notes
+
 ### Input
 
 Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor).
@@ -81,18 +110,9 @@ Input is read by the framework and can be accessed in the solution via the `Inpu
 Each *problem* run instantiates a new solution, so state can't be shared between runs.
 Benchmarking includes the runtime of the constructor as well as the specific problem, however it doesn't include reading input files.
 
-### Disabling Solutions, Problems and Inputs
+### Disabling Problems
 
-Solutions can be disabled by passing in `false` to the `Solution` attribute, which means it will be ignored for runs and benchmarks. This is also the case with inputs which can be disabled via the `SolutionInput` attribute:
-
-```csharp
-[Solution(1, Enabled = true)]
-[SolutionInput("Input1.test.txt", Enabled = false)]
-[SolutionInput("Input1.txt")]
-public class MySolution : Solution
-```
-
-A problem that throws a `NotImplementedException` or returns `null` is not considered as having failed and therefore will not contribute to the benchmarks, or stop the current run.
+A problem that returns `null` is not considered as having failed and therefore will not contribute to the benchmarks, or stop the current run.
 
 ### Pitfalls
 
