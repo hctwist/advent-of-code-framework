@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Framework.Runner.Benchmark;
+﻿using AdventOfCode.Framework.Runner;
+using AdventOfCode.Framework.Runner.Benchmark;
 using AdventOfCode.Framework.Runner.Solve;
 
 namespace AdventOfCode.Framework;

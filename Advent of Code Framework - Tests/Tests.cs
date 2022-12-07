@@ -1,7 +1,4 @@
-using System.Reflection;
-using AdventOfCode.Framework.Runner.Benchmark;
-using AdventOfCode.Framework.Runner.Solve;
-using AdventOfCode.Framework.Tests.Mocks;
+using AdventOfCode.Framework.Runner;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AdventOfCode.Framework.Tests;
@@ -21,7 +18,7 @@ public class Tests
     {
         SolutionRunner runner = new(new Options()
         {
-            MaxTimePerCase = TimeSpan.FromSeconds(5)
+            MaxBenchmarkTimePerProblem = TimeSpan.FromSeconds(5)
         });
         runner.BenchmarkAll();
     }

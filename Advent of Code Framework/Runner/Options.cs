@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Framework.Runner.Benchmark;
+﻿namespace AdventOfCode.Framework.Runner;
 
 public class Options
 {
