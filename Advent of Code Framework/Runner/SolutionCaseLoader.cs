@@ -4,7 +4,7 @@ namespace AdventOfCode.Framework.Runner;
 
 internal static class SolutionCaseLoader
 {
-    public static List<SolutionCase> GetSolutionCases(int? day)
+    public static List<SolutionCase> GetSolutionCases()
     {
         IEnumerable<Type> solutionTypes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assembly => assembly.GetTypes())
@@ -16,8 +16,7 @@ internal static class SolutionCaseLoader
         {
             SolutionMetadata solutionMetadata = GetSolutionMetadata(solutionType);
 
-            if ((day is not null && solutionMetadata.SolutionAttribute.Day != day) ||
-                !solutionMetadata.SolutionAttribute.Enabled)
+            if (!solutionMetadata.SolutionAttribute.Enabled)
             {
                 continue;
             }
@@ -26,11 +25,32 @@ internal static class SolutionCaseLoader
 
             foreach (SolutionInputAttribute inputAttribute in solutionMetadata.SolutionInputAttributes)
             {
-                InputInformation inputInformation = new(inputAttribute.Path, inputAttribute.Benchmark);
-                cases.Add(
-                    new SolutionCase(
-                        new SolutionDefinition(solutionMetadata.SolutionAttribute.Day, solutionType, factory),
-                        inputInformation));
+                if (!inputAttribute.Enabled)
+                {
+                    continue;
+                }
+                
+                if (inputAttribute.Problem.Includes(SingleProblem.Problem1))
+                {
+                    cases.Add(new SolutionCase(
+                        solutionMetadata.SolutionAttribute.Day,
+                        SingleProblem.Problem1,
+                        solutionType,
+                        factory,
+                        inputAttribute.Path,
+                        inputAttribute.Benchmark));
+                }
+                
+                if (inputAttribute.Problem.Includes(SingleProblem.Problem2))
+                {
+                    cases.Add(new SolutionCase(
+                        solutionMetadata.SolutionAttribute.Day,
+                        SingleProblem.Problem2,
+                        solutionType,
+                        factory,
+                        inputAttribute.Path,
+                        inputAttribute.Benchmark));
+                }
             }
         }
 

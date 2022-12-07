@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Framework.Runner;
+﻿using AdventOfCode.Framework.Runner.Benchmark;
+using AdventOfCode.Framework.Runner.Solve;
 
 namespace AdventOfCode.Framework;
 
@@ -7,29 +8,24 @@ namespace AdventOfCode.Framework;
 /// </summary>
 public class SolutionRunner
 {
-    private readonly AOCSolveRunner solveRunner;
+    private readonly SolveRunner solveRunner;
 
-    private readonly AOCBenchmarkRunner benchmarkRunner;
-    
+    private readonly BenchmarkRunner benchmarkRunner;
+
     /// <summary>
     /// Creates a new <see cref="SolutionRunner"/>.
     /// </summary>
-    /// <param name="inputDirectoryPath">The path of the input directory.</param>
-    public SolutionRunner(string? inputDirectoryPath)
+    /// <param name="options">The runner options.</param>
+    public SolutionRunner(Options options)
     {
-        if (inputDirectoryPath is not null && !Directory.Exists(inputDirectoryPath))
-        {
-            throw new Exception($"Could not find subdirectory {inputDirectoryPath}");
-        }
-
-        solveRunner = new AOCSolveRunner(inputDirectoryPath);
-        benchmarkRunner = new AOCBenchmarkRunner(inputDirectoryPath);
+        solveRunner = new SolveRunner(options);
+        benchmarkRunner = new BenchmarkRunner(options);
     }
 
     /// <summary>
     /// Creates a new <see cref="SolutionRunner"/>.
     /// </summary>
-    public SolutionRunner() : this(null)
+    public SolutionRunner() : this(new Options())
     {
     }
 
@@ -47,24 +43,32 @@ public class SolutionRunner
 
         if (args[0].Equals("solve", StringComparison.OrdinalIgnoreCase))
         {
-            if (int.TryParse(args[1], out int day))
+            switch (args.Length)
             {
-                switch (args.Length)
-                {
-                    case 2:
-                        Solve(day);
-                        return;
-                    case 3 when int.TryParse(args[2], out int problem):
-                        Solve(day, problem);
-                        return;
-                }
+                case 1:
+                    SolveAll();
+                    return;
+                case 2 when int.TryParse(args[1], out int day):
+                    Solve(day);
+                    return;
+                case 3 when int.TryParse(args[1], out int day) && int.TryParse(args[2], out int problem):
+                    Solve(day, ProblemHelpers.Parse(problem));
+                    return;
             }
         }
         else if (args[0].Equals("benchmark", StringComparison.OrdinalIgnoreCase))
         {
-            if (args.Length == 1)
+            switch (args.Length)
             {
-                Benchmark();
+                case 1:
+                    BenchmarkAll();
+                    return;
+                case 2 when int.TryParse(args[1], out int day):
+                    Benchmark(day);
+                    return;
+                case 3 when int.TryParse(args[1], out int day) && int.TryParse(args[2], out int problem):
+                    Benchmark(day, ProblemHelpers.Parse(problem));
+                    return;
             }
         }
 
@@ -75,21 +79,29 @@ public class SolutionRunner
     /// Runs solutions in solve mode.
     /// </summary>
     /// <param name="day">The day to solve.</param>
-    /// <param name="problem">The problem to solve. If this is null then both problems will be solved.</param>
-    public void Solve(int day, int? problem = null)
-    {
-        Solve(day, ProblemHelpers.Parse(problem));
-    }
-
-    /// <summary>
-    /// Runs solutions in solve mode.
-    /// </summary>
-    /// <param name="day">The day to solve.</param>
     /// <param name="problem">The problem to solve.</param>
-    public void Solve(int day, Problem problem)
+    public void Solve(int day, Problem problem = Problem.All)
     {
         PrintIntro();
         solveRunner.Run(day, problem);
+    }
+
+    /// <summary>
+    /// Runs all solutions in solve mode..
+    /// </summary>
+    public void SolveAll()
+    {
+        PrintIntro();
+        solveRunner.RunAll();
+    }
+
+    /// <summary>
+    /// Runs solutions for the latest day in solve mode.
+    /// </summary>
+    public void SolveLatest()
+    {
+        PrintIntro();
+        solveRunner.RunLatest();
     }
 
     /// <summary>
@@ -97,10 +109,19 @@ public class SolutionRunner
     /// </summary>
     /// <param name="day">The day to benchmark. If this is null, then all days will be benchmarked.</param>
     /// <param name="problem">The problem to benchmark. If this is null, then both problems will be benchmarked.</param>
-    public void Benchmark()
+    public void Benchmark(int day, Problem problem = Problem.All)
     {
         PrintIntro();
-        benchmarkRunner.Run();
+        benchmarkRunner.Run(day, problem);
+    }
+
+    /// <summary>
+    /// Runs all solutions in benchmark mode.
+    /// </summary>
+    public void BenchmarkAll()
+    {
+        PrintIntro();
+        benchmarkRunner.RunAll();
     }
 
     private static void PrintIntro()
@@ -119,7 +140,7 @@ public class SolutionRunner
         Console.WriteLine();
         Console.WriteLine();
     }
-    
+
     private static void PrintUsage()
     {
         Console.WriteLine("Invalid arguments. Expected arguments of the form:");

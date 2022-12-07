@@ -1,13 +1,15 @@
 namespace AdventOfCode.Framework.Runner;
 
-public record SolutionCase(SolutionDefinition Definition, InputInformation Input);
-
-public record SolutionDefinition(int Day, Type Type, SolutionFactory Factory);
-
-public record InputInformation(string Path, bool Benchmark)
+internal record SolutionCase(
+    int Day,
+    SingleProblem Problem,
+    Type Type,
+    SolutionFactory Factory,
+    string InputPath,
+    bool Benchmark)
 {
-    public static string ResolvePath(string path, string? relativeTo)
+    public string ResolveInputPath(string? relativeTo)
     {
-        return string.IsNullOrEmpty(relativeTo) ? path : System.IO.Path.Combine(relativeTo, path);
+        return string.IsNullOrEmpty(relativeTo) ? InputPath : Path.Combine(relativeTo, InputPath);
     }
 }

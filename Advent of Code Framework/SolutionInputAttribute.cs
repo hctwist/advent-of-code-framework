@@ -15,6 +15,11 @@ public class SolutionInputAttribute : Attribute
     /// Gets or sets whether this input should be used for benchmarking.
     /// </summary>
     public bool Benchmark { get; set; }
+
+    /// <summary>
+    /// The problem that this input should be used for.
+    /// </summary>
+    public Problem Problem { get; set; }
     
     internal string Path { get; }
     

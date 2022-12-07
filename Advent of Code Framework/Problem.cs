@@ -24,7 +24,18 @@ internal static class ProblemHelpers
             _ => Problem.All
         };
     }
-    
+
+    public static bool Includes(this Problem problem, SingleProblem singleProblem)
+    {
+        return problem switch
+        {
+            Problem.All => true,
+            Problem.Problem1 => singleProblem == SingleProblem.Problem1,
+            Problem.Problem2 => singleProblem == SingleProblem.Problem2,
+            _ => throw new ArgumentException(nameof(problem))
+        };
+    }
+
     public static string ToDisplayString(this SingleProblem problem)
     {
         return problem switch
