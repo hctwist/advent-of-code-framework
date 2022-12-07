@@ -14,4 +14,10 @@
         <PackageVersion>1.1.2</PackageVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Update="SolutionBenchmark.cs">
+        <DependentUpon>SolutionRunner.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>
