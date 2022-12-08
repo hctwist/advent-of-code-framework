@@ -79,6 +79,18 @@ runner.Run(new string[] { "run", "1", "1" });
 ```
 *Note that `SolveLatest` is not supported with run arguments.*
 
+## Input
+
+Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor). Either the input split by line, or a raw input string can be read.
+
+```csharp
+protected override string? Problem1()
+{
+    string[] lines = Input.Lines;
+    string raw = Input.Raw;
+}
+```
+
 ## Solution Options
 
 ### Solution Attribute
@@ -100,10 +112,6 @@ The solution input attribute takes in a path to an input file to run the solutio
 *Note that in benchmark mode, only inputs marked with `Benchmark = true` will be considered. This is `false` by default.
 
 ## Notes
-
-### Input
-
-Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor).
 
 ### Process
 
