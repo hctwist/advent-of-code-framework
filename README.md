@@ -81,7 +81,7 @@ runner.Run(new string[] { "run", "1", "1" });
 
 ## Input
 
-Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor). Either the input split by line, or a raw input string can be read.
+Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor). The input can be read in lines, or as a raw input string.
 
 ```csharp
 protected override string? Problem1()
