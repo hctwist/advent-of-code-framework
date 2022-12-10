@@ -21,4 +21,16 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Runner\Intros\Intro1.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Runner\Intros\Intro2.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Runner\Intros\Intro3.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

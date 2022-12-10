@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using AdventOfCode.Framework.Runner.Benchmark;
+using AdventOfCode.Framework.Runner.ConsoleHelpers;
 
 namespace AdventOfCode.Framework.Runner.Solve;
 
@@ -24,14 +24,14 @@ internal class SolveRunner
             Console.WriteLine($"Could not find any solutions for day {day}");
             return;
         }
-        
+
         Run(solutionCases);
     }
 
     public void RunAll()
     {
         List<SolutionCase> solutionCases = SolutionCaseLoader.GetSolutionCases();
-        
+
         if (solutionCases.Count == 0)
         {
             Console.WriteLine("Could not find any solutions");
@@ -44,7 +44,7 @@ internal class SolveRunner
     public void RunLatest()
     {
         List<SolutionCase> solutionCases = SolutionCaseLoader.GetSolutionCases();
-        
+
         if (solutionCases.Count == 0)
         {
             Console.WriteLine("Could not find any solutions");
@@ -61,54 +61,40 @@ internal class SolveRunner
 
     private void Run(List<SolutionCase> solutionCases)
     {
-        foreach (IGrouping<int, SolutionCase> solutionCasesByDay in solutionCases.GroupBy(c => c.Day).OrderBy(c => c.Key))
-        {
-            Console.WriteLine($"~ Day {solutionCasesByDay.Key} ~");
-            Console.WriteLine();
-            foreach (IGrouping<string, SolutionCase> solutionCaseByInputPath in solutionCasesByDay.GroupBy(c => c.InputPath))
-            {
-                Console.WriteLine($"{solutionCaseByInputPath.Key}");
-                Console.WriteLine("------");
+        List<SolveResult> results = solutionCases
+            .Select(Solve)
+            .OrderBy(result => result.Case.Day)
+            .ThenBy(result => result.Case.InputPath)
+            .ThenBy(result => result.Case.Problem)
+            .ThenBy(result => result.Case.Type.Name)
+            .ToList();
 
-                foreach (IGrouping<SingleProblem, SolutionCase> solutionCasesByProblem in solutionCaseByInputPath.GroupBy(c => c.Problem))
+        HashSet<SolveResult> inconsistentResults = new();
+        foreach (IGrouping<(int Day, string InputPath, SingleProblem Problem), SolveResult> grouping in results.GroupBy(result => (result.Case.Day, result.Case.InputPath, result.Case.Problem)))
+        {
+            if (grouping.Where(result => result.Result is not null).Distinct().Count() > 1)
+            {
+                foreach (SolveResult result in grouping)
                 {
-                    Run(solutionCasesByProblem.ToArray(), solutionCasesByProblem.Key);
+                    inconsistentResults.Add(result);
                 }
             }
         }
-    }
 
-    private void Run(SolutionCase[] solutionCases, SingleProblem problem)
-    {
-        Console.WriteLine($"* {problem.ToDisplayString()} *");
-
-        SolveResult[] results = solutionCases.Select(Solve).ToArray();
-
-        bool consistentResults = results.Where(r => r.Result is not null).Distinct().Count() <= 1;
+        TableBuilder resultsBuilder = new("Day", "Input", "Problem", "Solution", "Time (approx.)", "Result");
 
         foreach (SolveResult result in results)
         {
-            Console.WriteLine($"[{result.Name}]");
-
-            if (result.Result is null)
-            {
-                Console.WriteLine("No attempt");
-            }
-            else
-            {
-                if (consistentResults)
-                {
-                    Console.WriteLine(result.Result);
-                }
-                else
-                {
-                    ConsoleHelper.WriteLine(result.Result, ConsoleColor.Red);
-                }
-                ConsoleHelper.WriteLine($"Time taken (approx.): {result.Time} milliseconds", ConsoleColor.DarkGray);
-            }
-
-            Console.WriteLine();
+            resultsBuilder.Cell(result.Case.Day.ToString())
+                .Cell(result.Case.InputPath)
+                .Cell(result.Case.Problem.ToDisplayString())
+                .Cell(result.Case.Type.Name)
+                .Cell($"{result.Time}ms")
+                .Cell(result.Result ?? "-", GetColorForResult(result.Result, result.Case.ProblemSolution, inconsistentResults.Contains(result)))
+                .NewRow();
         }
+
+        resultsBuilder.WriteToConsole();
     }
 
     private SolveResult Solve(SolutionCase solutionCase)
@@ -128,8 +114,23 @@ internal class SolveRunner
 
         stopwatch.Stop();
 
-        return new SolveResult(solutionCase.Type.Name, result, stopwatch.ElapsedMilliseconds);
+        return new SolveResult(solutionCase, result, stopwatch.ElapsedMilliseconds);
     }
 
-    private record SolveResult(string Name, string? Result, long Time);
+    private static ConsoleColor? GetColorForResult(string? result, string? solution, bool inconsistent)
+    {
+        if (result is null)
+        {
+            return null;
+        }
+        
+        if (solution is null)
+        {
+            return inconsistent ? ConsoleColor.Yellow : null;
+        }
+
+        return result == solution ? ConsoleColor.Green : ConsoleColor.Red;
+    }
+
+    private record SolveResult(SolutionCase Case, string? Result, long Time);
 }

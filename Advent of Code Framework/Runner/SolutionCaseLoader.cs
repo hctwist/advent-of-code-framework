@@ -38,7 +38,8 @@ internal static class SolutionCaseLoader
                         solutionType,
                         factory,
                         inputAttribute.Path,
-                        inputAttribute.Benchmark));
+                        inputAttribute.Benchmark,
+                        inputAttribute.Problem1Solution));
                 }
                 
                 if (inputAttribute.Problem.Includes(SingleProblem.Problem2))
@@ -49,7 +50,8 @@ internal static class SolutionCaseLoader
                         solutionType,
                         factory,
                         inputAttribute.Path,
-                        inputAttribute.Benchmark));
+                        inputAttribute.Benchmark,
+                        inputAttribute.Problem2Solution));
                 }
             }
         }

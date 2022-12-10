@@ -6,7 +6,8 @@ internal record SolutionCase(
     Type Type,
     SolutionFactory Factory,
     string InputPath,
-    bool Benchmark)
+    bool Benchmark,
+    string? ProblemSolution)
 {
     public string ResolveInputPath(string? relativeTo)
     {

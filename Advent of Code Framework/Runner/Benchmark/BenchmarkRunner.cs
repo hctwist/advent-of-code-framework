@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using AdventOfCode.Framework.Runner.ConsoleHelpers;
 
 namespace AdventOfCode.Framework.Runner.Benchmark;
 
@@ -25,7 +26,7 @@ internal class BenchmarkRunner
             Console.WriteLine($"Could not find any solutions to benchmark for day {day}");
             return;
         }
-        
+
         Run(cases, problem);
     }
 
@@ -34,13 +35,13 @@ internal class BenchmarkRunner
         List<SolutionCase> cases = SolutionCaseLoader.GetSolutionCases()
             .Where(c => c.Benchmark)
             .ToList();
-        
+
         if (cases.Count == 0)
         {
             Console.WriteLine($"Could not find any solutions to benchmark");
             return;
         }
-        
+
         Run(cases, Problem.All);
     }
 
@@ -73,37 +74,30 @@ internal class BenchmarkRunner
             .ThenBy(result => result.Ticks)
             .ToList();
 
-        string[,] resultsTable = new string[sortedResults.Count + 1, 5];
+        TableBuilder resultsBuilder = new("Day", "Input", "Problem", "Solution", "Time (millis)");
 
-        resultsTable[0, 0] = "Day";
-        resultsTable[0, 1] = "Input";
-        resultsTable[0, 2] = "Problem";
-        resultsTable[0, 3] = "Solution";
-        resultsTable[0, 4] = "Time (millis)";
-
-        for (int i = 0; i < sortedResults.Count; i++)
+        foreach (BenchmarkResult result in sortedResults)
         {
-            BenchmarkResult result = sortedResults[i];
-            resultsTable[i + 1, 0] = result.Case.Day.ToString();
-            resultsTable[i + 1, 1] = result.Case.InputPath;
-            resultsTable[i + 1, 2] = result.Case.Problem.ToDisplayString();
-            resultsTable[i + 1, 3] = result.Case.Type.Name;
-            resultsTable[i + 1, 4] = (result.Ticks / 10_000).ToString("N2");
+            resultsBuilder.Cell(result.Case.Day.ToString())
+                .Cell(result.Case.InputPath)
+                .Cell(result.Case.Problem.ToDisplayString())
+                .Cell(result.Case.Type.Name)
+                .Cell((result.Ticks / 10_000).ToString("N2"))
+                .NewRow();
         }
 
-        Console.WriteLine();
-        ConsoleHelper.WriteTable(resultsTable, true);
+        resultsBuilder.WriteToConsole();
 
         // TODO Aggregate statistics
 
         if (failedCases.Count > 0)
         {
             Console.WriteLine();
-            ConsoleHelper.WriteLine($"Failed to benchmark {failedCases.Count} solution cases:", ConsoleColor.Red);
+            ColoredConsole.WriteLine($"Failed to benchmark {failedCases.Count} solution cases:", ConsoleColor.Red);
 
             foreach (SolutionCase failedCase in failedCases)
             {
-                ConsoleHelper.WriteLine($"{failedCase.Type.Name} ({failedCase.InputPath}, {failedCase.Problem.ToDisplayString()})", ConsoleColor.Red);
+                ColoredConsole.WriteLine($"{failedCase.Type.Name} ({failedCase.InputPath}, {failedCase.Problem.ToDisplayString()})", ConsoleColor.Red);
             }
         }
     }
@@ -131,7 +125,7 @@ internal class BenchmarkRunner
                 default:
                     throw new ArgumentException();
             }
-            
+
             if (stopwatch.ElapsedMilliseconds > options.MaxBenchmarkTimePerProblem.TotalMilliseconds)
             {
                 break;

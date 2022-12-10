@@ -21,6 +21,16 @@ public class SolutionInputAttribute : Attribute
     /// </summary>
     public Problem Problem { get; set; }
     
+    /// <summary>
+    /// The solution to problem 1.
+    /// </summary>
+    public string? Problem1Solution { get; set; }
+    
+    /// <summary>
+    /// The solution to problem 2.
+    /// </summary>
+    public string? Problem2Solution { get; set; }
+    
     internal string Path { get; }
     
     /// <summary>
@@ -32,5 +42,7 @@ public class SolutionInputAttribute : Attribute
         Path = path;
         Enabled = true;
         Benchmark = false;
+        Problem1Solution = null;
+        Problem2Solution = null;
     }
 }

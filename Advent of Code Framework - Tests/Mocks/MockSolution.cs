@@ -1,7 +1,7 @@
 ﻿namespace AdventOfCode.Framework.Tests.Mocks;
 
 [Solution(0)]
-[SolutionInput("Mocks/MockInput.txt", Benchmark = true)]
+[SolutionInput("Mocks/MockInput.txt", Benchmark = true, Problem1Solution = "53455636")]
 public class MockSolution : Solution
 {
     /// <inheritdoc />
@@ -12,7 +12,7 @@ public class MockSolution : Solution
     /// <inheritdoc />
     protected override string? Problem1()
     {
-        return "null";
+        return "53455636";
     }
 
     /// <inheritdoc />

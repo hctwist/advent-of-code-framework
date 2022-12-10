@@ -127,17 +127,10 @@ public class SolutionRunner
 
     private static void PrintIntro()
     {
-        Console.WriteLine(
-            @"
-   .-.                                                   \ /
-  ( (                                |                  - * -
-   '-`                              -+-                  / \
-            \            o          _|_          \
-            ))          }^{        /___\         ))
-          .-#-----.     /|\     .---'-'---.    .-#-----.
-     ___ /_________\   //|\\   /___________\  /_________\  
-    /___\ |[] _ []|    //|\\    | A /^\ A |    |[] _ []| _.O,_
-....|'#'|.|  |*|  |...///|\\\...|   |'|   |....|  |*|  |..(^)....");
+        string[] intros = Directory.GetFiles("Runner/Intros");
+        string intro = File.ReadAllText(intros[new Random().Next(intros.Length)]);
+        
+        Console.WriteLine(intro);
         Console.WriteLine();
         Console.WriteLine();
     }
