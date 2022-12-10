@@ -8,7 +8,7 @@ The framework supports two run modes:
 ### Solve Mode
 Runs solutions and outputs the result from the problems.
 
-### Benchmark Mode [In Development]
+### Benchmark Mode
 Benchmarks solution problems.
 
 ## Setting Up Solutions
@@ -79,6 +79,18 @@ runner.Run(new string[] { "run", "1", "1" });
 ```
 *Note that `SolveLatest` is not supported with run arguments.*
 
+## Input
+
+Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor). The input can be read in lines, or as a raw input string.
+
+```csharp
+protected override string? Problem1()
+{
+    string[] lines = Input.Lines;
+    string raw = Input.Raw;
+}
+```
+
 ## Solution Options
 
 ### Solution Attribute
@@ -100,10 +112,6 @@ The solution input attribute takes in a path to an input file to run the solutio
 *Note that in benchmark mode, only inputs marked with `Benchmark = true` will be considered. This is `false` by default.
 
 ## Notes
-
-### Input
-
-Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor).
 
 ### Process
 
