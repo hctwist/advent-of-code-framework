@@ -116,7 +116,7 @@ Solutions to the problems can also be added which will allow incorrect runs to b
 [SolutionInput("Input.txt", Problem1Solution = "X", Problem2Solution = "X")
 ```
 
-*Note that in benchmark mode, only inputs marked with `Benchmark = true` will be considered. This is `false` by default.
+*Note that in benchmark mode, only inputs marked with `Benchmark = true` will be considered. This is `false` by default.*
 
 ## Notes
 
