@@ -10,7 +10,7 @@
         <Authors>Henry Twist</Authors>
         <Description>Simple framework to bootstrap Advent of Code solutions.</Description>
         <PackageProjectUrl>https://github.com/hctwist/advent-of-code-framework</PackageProjectUrl>
-        <PackageVersion>1.2.1</PackageVersion>
+        <PackageVersion>1.3.0</PackageVersion>
         <LangVersion>default</LangVersion>
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     </PropertyGroup>

@@ -18,7 +18,10 @@ public class Tests
     {
         SolutionRunner runner = new(new Options()
         {
-            MaxBenchmarkTimePerProblem = TimeSpan.FromSeconds(5)
+            Benchmarks = new BenchmarkOptions
+            {
+                MaxTime = TimeSpan.FromSeconds(5)
+            }
         });
         runner.BenchmarkAll();
     }
