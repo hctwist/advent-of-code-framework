@@ -62,17 +62,17 @@ internal class SolveRunner
     private void Run(List<SolutionCase> solutionCases)
     {
         List<SolveResult> results = solutionCases
+            .OrderBy(c => c.Day)
+            .ThenBy(c => c.InputPath)
+            .ThenBy(c => c.Problem)
+            .ThenBy(c => c.Type.Name)
             .Select(Solve)
-            .OrderBy(result => result.Case.Day)
-            .ThenBy(result => result.Case.InputPath)
-            .ThenBy(result => result.Case.Problem)
-            .ThenBy(result => result.Case.Type.Name)
             .ToList();
 
         HashSet<SolveResult> inconsistentResults = new();
         foreach (IGrouping<(int Day, string InputPath, SingleProblem Problem), SolveResult> grouping in results.GroupBy(result => (result.Case.Day, result.Case.InputPath, result.Case.Problem)))
         {
-            if (grouping.Where(result => result.Result is not null).Distinct().Count() > 1)
+            if (grouping.Select(result => result.Result).Where(result => result is not null).Distinct().Count() > 1)
             {
                 foreach (SolveResult result in grouping)
                 {
@@ -104,6 +104,7 @@ internal class SolveRunner
         Stopwatch stopwatch = new();
         stopwatch.Start();
 
+
         Solution solution = solutionCase.Factory.Create(input);
         string? result = solutionCase.Problem switch
         {
@@ -113,7 +114,6 @@ internal class SolveRunner
         };
 
         stopwatch.Stop();
-
         return new SolveResult(solutionCase, result, stopwatch.ElapsedMilliseconds);
     }
 
@@ -123,7 +123,7 @@ internal class SolveRunner
         {
             return null;
         }
-        
+
         if (solution is null)
         {
             return inconsistent ? ConsoleColor.Yellow : null;

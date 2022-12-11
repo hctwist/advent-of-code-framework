@@ -4,7 +4,6 @@ using AdventOfCode.Framework.Runner.ConsoleHelpers;
 
 namespace AdventOfCode.Framework.Runner.Benchmark;
 
-// TODO Debug warning
 internal class BenchmarkRunner
 {
     private readonly Options options;
@@ -47,16 +46,34 @@ internal class BenchmarkRunner
 
     private void Run(List<SolutionCase> solutionCases, Problem problem)
     {
+#if DEBUG
+        if (!options.Benchmarks.AllowDebugMode)
+        {
+            ColoredConsole.WriteLine(
+                $"Benchmarking is not permitted in debug. To override this you can set {nameof(Options.Benchmarks.AllowDebugMode)} in options",
+                ConsoleColor.Yellow);
+            return;
+        }
+#endif
+
         List<BenchmarkResult> results = new(solutionCases.Count * 2);
         List<SolutionCase> failedCases = new();
-
-        foreach (SolutionCase solutionCase in solutionCases)
+        
+        for (int i = 0; i < solutionCases.Count; i++)
         {
-            // TODO Progress indications
+            SolutionCase solutionCase = solutionCases[i];
+            Console.WriteLine($"Running benchmark {i + 1}/{solutionCases.Count}: [{solutionCase.Type.Name}] ~ {solutionCase.InputPath} ~ {solutionCase.Problem.ToDisplayString()}");
             if (problem.Includes(solutionCase.Problem))
             {
                 if (TryBenchmark(solutionCase, out BenchmarkResult? result))
                 {
+                    if (result.ExceptionThrown is not null)
+                    {
+                        Console.WriteLine($"[{solutionCase.Type.Name}] threw an exception for {solutionCase.Problem.ToDisplayString()} ({solutionCase.InputPath})");
+                        ColoredConsole.WriteLine(result.ExceptionThrown.ToString(), ConsoleColor.Red);
+                        Console.WriteLine();
+                    }
+
                     results.Add(result);
                 }
                 else
@@ -65,6 +82,9 @@ internal class BenchmarkRunner
                 }
             }
         }
+
+        Console.WriteLine();
+        Console.WriteLine();
 
         List<BenchmarkResult> sortedResults = results
             .OrderBy(result => result.Case.Day)
@@ -88,7 +108,6 @@ internal class BenchmarkRunner
 
         resultsBuilder.WriteToConsole();
 
-        // TODO Aggregate statistics
 
         if (failedCases.Count > 0)
         {
@@ -110,7 +129,7 @@ internal class BenchmarkRunner
         stopwatch.Start();
 
         int warmupIterations = 0;
-        for (int i = 0; i < options.MaxBenchmarkIterations; i++)
+        for (int i = 0; i < options.Benchmarks.MaxIterations; i++)
         {
             Solution solution = solutionCase.Factory.Create(input);
 
@@ -126,7 +145,7 @@ internal class BenchmarkRunner
                     throw new ArgumentException();
             }
 
-            if (stopwatch.ElapsedMilliseconds > options.MaxBenchmarkTimePerProblem.TotalMilliseconds)
+            if (stopwatch.ElapsedMilliseconds > options.Benchmarks.MaxTime.TotalMilliseconds)
             {
                 break;
             }
@@ -146,17 +165,24 @@ internal class BenchmarkRunner
         for (int i = 0; i < warmupIterations; i++)
         {
             Solution solution = solutionCase.Factory.Create(input);
-
-            switch (solutionCase.Problem)
+            try
             {
-                case SingleProblem.Problem1:
-                    solution.Problem1();
-                    break;
-                case SingleProblem.Problem2:
-                    solution.Problem2();
-                    break;
-                default:
-                    throw new ArgumentException();
+                switch (solutionCase.Problem)
+                {
+                    case SingleProblem.Problem1:
+                        solution.Problem1();
+                        break;
+                    case SingleProblem.Problem2:
+                        solution.Problem2();
+                        break;
+                    default:
+                        throw new ArgumentException();
+                }
+            }
+            catch (Exception e) when (!options.Benchmarks.AbortWithExceptions)
+            {
+                result = new BenchmarkResult(solutionCase, e, 0);
+                return true;
             }
 
             iterations++;
@@ -166,9 +192,10 @@ internal class BenchmarkRunner
 
         result = new BenchmarkResult(
             solutionCase,
+            null,
             (double)stopwatch.ElapsedTicks / iterations);
         return true;
     }
 
-    private record BenchmarkResult(SolutionCase Case, double Ticks);
+    private record BenchmarkResult(SolutionCase Case, Exception? ExceptionThrown, double Ticks);
 }

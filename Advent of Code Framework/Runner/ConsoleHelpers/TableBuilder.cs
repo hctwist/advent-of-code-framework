@@ -31,7 +31,7 @@ internal class TableBuilder
     
     public TableBuilder Cell(string text, ConsoleColor? color = null)
     {
-        currentRow.Add(new CellContents(text, color));
+        currentRow.Add(new CellContents(text.SplitLines(), color));
         return this;
     }
 
@@ -43,13 +43,15 @@ internal class TableBuilder
         {
             for (int i = 0; i < row.Count; i++)
             {
+                int width = row[i].Lines.Max(l => l.Length);
+                
                 if (i < columnWidths.Count)
                 {
-                    columnWidths[i] = Math.Max(columnWidths[i], row[i].Text.Length);
+                    columnWidths[i] = Math.Max(columnWidths[i], width);
                 }
                 else
                 {
-                    columnWidths.Add(row[i].Text.Length);
+                    columnWidths.Add(width);
                 }
             }
         }
@@ -77,33 +79,51 @@ internal class TableBuilder
             Console.WriteLine();
         }
 
-        for (int i = 0; i < rows.Count; i++)
+        for (int r = 0; r < rows.Count; r++)
         {
-            for (int j = 0; j < rows[i].Count; j++)
+            int rowLines = rows[r].Count == 0 ? 0 : rows[r].Max(row => row.Lines.Length);
+            
+            for (int l = 0; l < rowLines; l++)
             {
-                CellContents cell = rows[i][j];
-                string cellText = cell.Text.PadRight(columnWidths[j]);
-                if (cell.Color is ConsoleColor c)
+                for (int c = 0; c < rows[r].Count; c++)
                 {
-                    ColoredConsole.Write(cell.Text, c);
-                }
-                else
-                {
-                    Console.Write(cellText);
+                    CellContents cell = rows[r][c];
+
+                    if (l < cell.Lines.Length)
+                    {
+                        string cellText = cell.Lines[l].PadRight(columnWidths[c]);
+                        if (cell.Color is ConsoleColor color)
+                        {
+                            ColoredConsole.Write(cellText, color);
+                        }
+                        else
+                        {
+                            Console.Write(cellText);
+                        }
+                    }
+                    else
+                    {
+                        Console.Write(new string(' ', columnWidths[c]));
+                    }
+                    
+                    if (c < rows[r].Count - 1)
+                    {
+                        Console.Write(VerticalSeparator);
+                    }
                 }
 
-                if (j < rows[i].Count - 1)
+                if (l < rowLines - 1)
                 {
-                    Console.Write(VerticalSeparator);
+                    Console.WriteLine();
                 }
             }
 
-            if (i < rows.Count)
+            if (r < rows.Count - 1)
             {
                 Console.WriteLine();
             }
         }
     }
 
-    private record CellContents(string Text, ConsoleColor? Color);
+    private record CellContents(string[] Lines, ConsoleColor? Color);
 }

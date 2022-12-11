@@ -15,8 +15,6 @@ public record Input(string Raw, string[] Lines)
         }
 
         string raw = File.ReadAllText(filePath);
-        string[] lines = raw.Split(new[] { "\n", "\r\n" }, StringSplitOptions.None);
-
-        return new Input(raw, lines);
+        return new Input(raw, raw.SplitLines());
     }
 }
