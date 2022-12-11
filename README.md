@@ -103,10 +103,17 @@ The solution attribute takes in the day that the solution corresponds to, and op
 
 ### Solution Input Attribute
 
-The solution input attribute takes in a path to an input file to run the solution for. This is by default resolved from the base directory of the project but this can be changed via the `SolutionRunner` options. Optional properties can be set to enable/disable the input, specify that the input is only relevant to a single problem and enable benchmarking.
+The solution input attribute takes in a path to an input file to run the solution for. This is by default resolved from the base directory of the project but this can be changed via the `SolutionRunner` options.
+
+Optional properties can be set to enable/disable the input, specify that the input is only relevant to a single problem and enable benchmarking.
 
 ```csharp
 [SolutionInput("Input.txt", Enabled = true, Benchmark = true, Problem = Problem.All)
+```
+
+Solutions to the problems can also be added which will allow incorrect runs to be marked in the solution output.
+```csharp
+[SolutionInput("Input.txt", Problem1Solution = "X", Problem2Solution = "X")
 ```
 
 *Note that in benchmark mode, only inputs marked with `Benchmark = true` will be considered. This is `false` by default.
@@ -120,7 +127,13 @@ Benchmarking includes the runtime of the constructor as well as the specific pro
 
 ### Disabling Problems
 
-A problem that returns `null` is not considered as having failed and therefore will not contribute to the benchmarks, or stop the current run.
+A problem that returns `null` is not considered as being a non-atttempt and therefore will not contribute to the benchmarks, or stop the current run.
+
+### Solve Output
+
+When running in Solve Mode, the output gives an approximate run time along with the problem result. If the result is known to be correct or incorrect, it will be highlighted in green and red respectively. If the result is not know, but two solutions provide different results for the the same problem, then these will be considered inconsistent and marked in yellow.
+
+*Note that the runtime is approximate, and doesn't take into account any overhead. To measure a problem accurately, run in Benchmark Mode.*
 
 ### Pitfalls
 
