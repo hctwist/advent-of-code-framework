@@ -127,9 +127,8 @@ public class SolutionRunner
 
     private static void PrintIntro()
     {
-        string[] intros = Directory.GetFiles("Runner/Intros");
-        string intro = File.ReadAllText(intros[new Random().Next(intros.Length)]);
-        
+        string intro = Intros[new Random().Next(Intros.Length)];
+
         Console.WriteLine(intro);
         Console.WriteLine();
         Console.WriteLine();
@@ -147,4 +146,40 @@ public class SolutionRunner
         Console.WriteLine("  benchmark 12 1");
         Console.WriteLine("  benchmark 24 2");
     }
+
+    public static readonly string[] Intros =
+    {
+        """
+   .-.                                                   \ /
+  ( (                                |                  - * -
+   '-`                              -+-                  / \
+            \            o          _|_          \
+            ))          }^{        /___\         ))
+          .-#-----.     /|\     .---'-'---.    .-#-----.
+     ___ /_________\   //|\\   /___________\  /_________\  
+    /___\ |[] _ []|    //|\\    | A /^\ A |    |[] _ []| _.O,_
+....|'#'|.|  |*|  |...///|\\\...|   |'|   |....|  |*|  |..(^)....
+""",
+        """
+                                                    __.  .--,
+*-/___,  ,-/___,-/___,-/___,-/___,           _.-.=,{\/ _/  /`)
+ `\ _ ),-/___,-/___,-/___,-/___, )     _..-'`-(`._(_.;`   /
+  /< \\=`\ _ )`\ _ )`\ _ )`\ _ )<`--''`     (__\_________/___,
+         /< <\ </ /< /< /< </ /<           (_____Y_____Y___,
+""",
+        """
+                                                     *
+  *                                                          *
+                               *                  *        .--.
+   \/ \/  \/  \/                                        ./   /=*
+     \/     \/      *            *                ...  (_____)
+      \ ^ ^/                                       \ \_((^o^))-.    *
+      (o)(O)--)--------\.                           \   (   ) \ \._.
+      |    |  ||================((~~~~~~~~~~~~~~~~~))|   ( )   |    \
+       \__/             ,|        \. * * * * * * ./  (~~~~~~~~~~)    \
+*        ||^||\.____./|| |          \___________/     ~||~~~~|~'\____/ *
+         || ||     || || A            ||    ||         ||    | 
+  *      <> <>     <> <>          (___||____||_____)  ((~~~~~|   *
+"""
+    };
 }
