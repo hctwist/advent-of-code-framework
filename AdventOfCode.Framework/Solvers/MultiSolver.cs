@@ -54,6 +54,12 @@ internal static class MultiSolver
 
         clearableRegion.Clear();
 
+        if (results.Count == 0)
+        {
+            AnsiConsole.WriteErrorLine("No solutions could be run. Before a solution can be included here it has to be run solo via 'Solve' mode");
+            return;
+        }
+
         var table = new Table().AddColumns("Day", "Problem", "Result", "Elapsed time");
 
         foreach (var result in results)
