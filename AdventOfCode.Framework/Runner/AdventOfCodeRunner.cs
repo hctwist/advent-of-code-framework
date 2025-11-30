@@ -23,16 +23,14 @@ public static class AdventOfCodeRunner
         var runnerOptions = new List<RunnerOption>();
 
         // Check if we have a previous run
-        if (PersistenceManager.TryReadRunState(out var runState))
+        if (PersistenceManager.TryReadLastRunFile(out var lastRun))
         {
             runnerOptions.Add(RunnerOption.Rerun);
         }
 
-        var solutionEntries = SolutionFinder.FindAll().ToList();
-
-        if (solutionEntries.Count == 0)
+        if (SolutionFinder.Entries.Count == 0)
         {
-            AnsiConsole.MarkupLine($"No solutions found. Each solution must implement [fuchsia]{nameof(ISolution)}[/] and be attributed with [fuchsia]{nameof(SolutionAttribute)}[/]");
+            AnsiConsole.MarkupLine($"No solutions found. Each solution must implement [fuchsia]{nameof(ISolution)}[/], be attributed with [fuchsia]{nameof(SolutionAttribute)}[/] and have a parameterless constructor");
             AnsiConsole.WriteLine();
 
             var panel = new Panel(
@@ -59,7 +57,7 @@ public static class AdventOfCodeRunner
             new SelectionPrompt<RunnerOption>()
                 .UseConverter(o => o switch
                 {
-                    RunnerOption.Rerun => $"{o.Humanize()} (day {runState!.Day}, {runState.Problem.Humanize(LetterCasing.LowerCase)})",
+                    RunnerOption.Rerun => $"{o.Humanize()} (day {lastRun!.Day}, {lastRun.Problem.Humanize(LetterCasing.LowerCase)})",
                     _ => o.Humanize()
                 })
                 .AddChoices(runnerOptions));
@@ -70,7 +68,7 @@ public static class AdventOfCodeRunner
         }
         else if (runnerOption == RunnerOption.Solve)
         {
-            var days = solutionEntries.OrderBy(e => e.Solved).ThenBy(e => e.Day).Select(e => e.Day);
+            var days = SolutionFinder.Entries.OrderBy(e => e.Solved).ThenBy(e => e.Day).Select(e => e.Day);
             var day = AnsiConsole.Prompt(new SelectionPrompt<int>().AddChoices(days).EnableSearch().UseConverter(c => $"Day {c}"));
 
             var problem = AnsiConsole.Prompt(
@@ -78,7 +76,7 @@ public static class AdventOfCodeRunner
                     .UseHumanizerConverter()
                     .AddChoices(Enum.GetValues<Problem>()));
 
-            PersistenceManager.WriteRunState(new RunState(day, problem));
+            PersistenceManager.WriteLastRunFile(new LastRun(day, problem));
 
             Solve(day, problem);
         }
@@ -93,13 +91,13 @@ public static class AdventOfCodeRunner
     /// </summary>
     public static void Rerun()
     {
-        if (!PersistenceManager.TryReadRunState(out var state))
+        if (!PersistenceManager.TryReadLastRunFile(out var lastRun))
         {
             AnsiConsole.WriteErrorLine("Could not find a previous run");
             return;
         }
 
-        Solve(state.Day, state.Problem);
+        Solve(lastRun.Day, lastRun.Problem);
     }
 
     /// <summary>

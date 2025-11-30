@@ -8,25 +8,22 @@ namespace AdventOfCode.Framework.Persistence;
 internal static class PersistenceManager
 {
     private static readonly string FolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Advent of Code");
-    private static readonly string RunStatePath = Path.Combine(FolderPath, "Run State.json");
+    private static readonly string LastRunPath = Path.Combine(FolderPath, "Last Run.json");
 
-    internal static void WriteRunState(RunState state)
+    internal static void WriteLastRunFile(LastRun lastRun)
     {
-        var stateString = JsonSerializer.Serialize(state);
-        File.WriteAllText(RunStatePath, stateString);
+        File.WriteAllText(LastRunPath, JsonSerializer.Serialize(lastRun));
     }
 
-    internal static bool TryReadRunState([NotNullWhen(true)] out RunState? state)
+    internal static bool TryReadLastRunFile([NotNullWhen(true)] out LastRun? lastRun)
     {
-        if (!File.Exists(RunStatePath))
+        if (!File.Exists(LastRunPath))
         {
-            state = default;
+            lastRun = default;
             return false;
         }
 
-        var stateString = File.ReadAllText(RunStatePath);
-
-        state = JsonSerializer.Deserialize<RunState>(stateString)!;
+        lastRun = JsonSerializer.Deserialize<LastRun>(File.ReadAllText(LastRunPath))!;
         return true;
     }
 
@@ -90,6 +87,6 @@ internal static class PersistenceManager
 
     private static string GetProblemFilePath(int day, Problem problem, ProblemFile file)
     {
-        return Path.ChangeExtension(Path.Combine(FolderPath, "Problem Data", $"Day {day}", problem.Humanize(), file.Humanize()), "txt");
+        return Path.ChangeExtension(Path.Combine(FolderPath, "Problem Data", $"Day {day}", problem.Humanize(), file.Humanize(LetterCasing.Title)), "txt");
     }
 }

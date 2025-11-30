@@ -17,7 +17,7 @@ internal static class SingleSolver
         AnsiConsole.Write(table);
         AnsiConsole.WriteLine();
 
-        var solutionEntries = SolutionFinder.FindAll()
+        var solutionEntries = SolutionFinder.Entries
             .Where(s => s.Day == day)
             .ToList();
 

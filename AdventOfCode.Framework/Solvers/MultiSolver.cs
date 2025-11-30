@@ -26,7 +26,7 @@ internal static class MultiSolver
             {
                 var tasks = new List<SolutionTask>();
 
-                foreach (var entry in SolutionFinder.FindAll().OrderBy(e => e.Day))
+                foreach (var entry in SolutionFinder.Entries.OrderBy(e => e.Day))
                 {
                     var task = c.AddTask($"Day {entry.Day}").MaxValue(2);
                     tasks.Add(new SolutionTask(task, entry));

@@ -1,10 +1,16 @@
-﻿using AdventOfCode.Framework.Solutions;
+﻿using System.Xml;
+using AdventOfCode.Framework.Solutions;
 
 namespace AdventOfCode.Framework.Sample;
 
 [Solution(Day = 1)]
 internal class SampleSolution : ISolution
 {
+    public SampleSolution(int x)
+    {
+
+    }
+
     /// <inheritdoc />
     public string SolveProblem1(ProblemInput input, ISolutionLogger logger)
     {
