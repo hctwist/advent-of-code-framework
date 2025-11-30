@@ -1,3 +1,5 @@
+[![NuGet version](https://img.shields.io/nuget/v/AdventOfCode.Framework.svg?style=flat-square)](https://www.nuget.org/packages/AdventOfCode.Framework/)
+
 # Advent of Code Framework
 
 C# framework to interactively bootstrap Advent of Code solutions.
@@ -8,7 +10,7 @@ The entry point to the framework is the `AdventOfCodeRunner`. From here you can 
 via `AdventOfCodeRunner.Run` or specify fixed options via methods like `AdventOfCodeRunner.Solve`. Solutions setup as
 in [Solutions](#solutions) will be picked up automatically, but the runner will guide through this.
 
-![img.png](Images/InteractiveConsole.png)
+![Sample](Images/InteractiveConsole.png)
 
 # Solutions
 
