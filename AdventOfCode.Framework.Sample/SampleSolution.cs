@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using AdventOfCode.Framework.Solutions;
+﻿using AdventOfCode.Framework.Solutions;
 
 namespace AdventOfCode.Framework.Sample;
 
