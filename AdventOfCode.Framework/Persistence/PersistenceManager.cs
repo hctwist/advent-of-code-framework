@@ -14,6 +14,7 @@ internal static class PersistenceManager
 
     internal static void WriteLastRunFile(LastRun lastRun)
     {
+        Directory.CreateDirectory(Path.GetDirectoryName(LastRunPath)!);
         File.WriteAllText(LastRunPath, JsonSerializer.Serialize(lastRun));
     }
 

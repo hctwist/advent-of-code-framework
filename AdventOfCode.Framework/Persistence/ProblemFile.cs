@@ -3,7 +3,7 @@
 internal enum ProblemFile
 {
     ExampleInput,
-    ExampleOutput,
-    MainInput,
-    MainOutput
+    ExampleAnswer,
+    PuzzleInput,
+    PuzzleAnswer
 }

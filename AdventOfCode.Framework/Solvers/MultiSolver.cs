@@ -34,20 +34,20 @@ internal static class MultiSolver
 
                 foreach (var task in tasks)
                 {
-                    var mainProblem1Result = SolveProblem(task.SolutionEntry, Problem.Problem1, ProblemFile.MainInput, ProblemFile.MainOutput);
+                    var problem1Result = SolveProblem(task.SolutionEntry, Problem.Problem1, ProblemFile.PuzzleInput, ProblemFile.PuzzleAnswer);
                     task.Progress.Value(1);
 
-                    if (mainProblem1Result is not null)
+                    if (problem1Result is not null)
                     {
-                        results.Add(new TaggedProblemResult(task.SolutionEntry.Day, Problem.Problem1, mainProblem1Result));
+                        results.Add(new TaggedProblemResult(task.SolutionEntry.Day, Problem.Problem1, problem1Result));
                     }
 
-                    var mainProblem2Result = SolveProblem(task.SolutionEntry, Problem.Problem2, ProblemFile.MainInput, ProblemFile.MainOutput);
+                    var problem2Result = SolveProblem(task.SolutionEntry, Problem.Problem2, ProblemFile.PuzzleInput, ProblemFile.PuzzleAnswer);
                     task.Progress.Value(2);
 
-                    if (mainProblem2Result is not null)
+                    if (problem2Result is not null)
                     {
-                        results.Add(new TaggedProblemResult(task.SolutionEntry.Day, Problem.Problem2, mainProblem2Result));
+                        results.Add(new TaggedProblemResult(task.SolutionEntry.Day, Problem.Problem2, problem2Result));
                     }
                 }
             });
@@ -73,7 +73,7 @@ internal static class MultiSolver
         SolutionEntry entry,
         Problem problem,
         ProblemFile inputFile,
-        ProblemFile outputFile)
+        ProblemFile answerFile)
     {
         if (!PersistenceManager.TryReadProblemFile(entry.Day, problem, inputFile, out var input))
         {
@@ -81,23 +81,23 @@ internal static class MultiSolver
         }
 
         var stopwatch = Stopwatch.StartNew();
-        var output = entry.Solve(problem, new ProblemInput(input), new NoOpSolutionLogger());
+        var answer = entry.Solve(problem, new ProblemInput(input), new NoOpSolutionLogger());
         var elapsedTime = stopwatch.Elapsed;
 
-        if (output is null)
+        if (answer is null)
         {
             return null;
         }
 
         bool? correct;
 
-        if (!PersistenceManager.TryReadProblemFile(entry.Day, problem, outputFile, out var expectedOutput))
+        if (!PersistenceManager.TryReadProblemFile(entry.Day, problem, answerFile, out var expectedAnswer))
         {
             correct = null;
         }
         else
         {
-            correct = Verification.VerifyOutput(output, expectedOutput);
+            correct = AnswerVerification.Check(answer, expectedAnswer);
         }
 
         return new ProblemResult(elapsedTime, correct);

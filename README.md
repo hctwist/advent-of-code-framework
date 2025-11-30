@@ -39,7 +39,7 @@ The solution attribute can also be used to enable/disable a solution and mark it
 
 ## Problems
 
-Each solution has a 'solve' method for each problem, which can return a string output of the problem, or null if the
+Each solution has a 'solve' method for each problem, which can return a string answer to the problem, or null if the
 problem has not been solved.
 
 Both the problem input and a logger are passed to the solve methods. The problem input can be consumed as either the
@@ -54,14 +54,14 @@ var inputMatrix = input.Matrix;
 Due to the interactive nature of the runner, writing to the console directly has undefined behaviour, whereas the logger
 is compatible with the interactive console.
 
-# Inputs and Outputs
+# Inputs and Answers
 
-When a problem is run for the first time, input and output files need to be provided. These are prompted for via Notepad
+When a problem is run for the first time, input and answer files need to be provided. These are prompted for via Notepad
 by the runner, and the user is expected to save and exit Notepad to continue (similar to command line Git). Initially
-required files are the input and output of the example part of the problem, plus the input of the main problem (the file
-will indicate the data expected).
+required files are the input and answer of the example part of the problem, plus the puzzle input (the files will
+indicate the data expected).
 
-After running the solution to the main problem the option will be given to save the output.
+After running the solution to the main problem the option will be given to save the answer.
 
-Inputs and outputs will be persisted at `%LocalAppData%\Advent of Code` and can be edited there if they require
+Inputs and answers will be persisted at `%LocalAppData%\Advent of Code` and can be edited there if they require
 updating.

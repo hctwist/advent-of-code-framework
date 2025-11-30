@@ -51,38 +51,38 @@ internal static class SingleSolver
 
         if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.ExampleInput, out var exampleInput))
         {
-            AnsiConsole.WriteErrorLine("Didn't receive any example input");
+            AnsiConsole.WriteErrorLine("No example input was written to the file");
             return;
         }
 
-        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.ExampleOutput, out var exampleOutput))
+        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.ExampleAnswer, out var exampleAnswer))
         {
-            AnsiConsole.WriteErrorLine("Didn't receive any example output");
+            AnsiConsole.WriteErrorLine("No example answer was written to the file");
             return;
         }
 
-        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.MainInput, out var mainInput))
+        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.PuzzleInput, out var puzzleInput))
         {
-            AnsiConsole.WriteErrorLine("Didn't receive any main input");
+            AnsiConsole.WriteErrorLine("No puzzle input was written to the file");
             return;
         }
 
-        var mainOutput = PersistenceManager.TryReadProblemFile(day, problem, ProblemFile.MainOutput, out var o) ? o : null;
+        var puzzleAnswer = PersistenceManager.TryReadProblemFile(day, problem, ProblemFile.PuzzleAnswer, out var o) ? o : null;
 
-        string? newMainOutput = null;
+        string? newPuzzleAnswer = null;
 
         AnsiConsole.Status()
             .Start(
                 "-",
                 c =>
                 {
-                    SolveProblem(solutionEntry, problem, "example", c, exampleInput, exampleOutput);
-                    newMainOutput = SolveProblem(solutionEntry, problem, "main", c, mainInput, mainOutput);
+                    SolveProblem(solutionEntry, problem, "example", c, exampleInput, exampleAnswer);
+                    newPuzzleAnswer = SolveProblem(solutionEntry, problem, "puzzle", c, puzzleInput, puzzleAnswer);
                 });
 
         var choices = new List<ExitChoice>();
 
-        if (newMainOutput is not null)
+        if (newPuzzleAnswer is not null)
         {
             choices.Add(ExitChoice.SaveSolution);
         }
@@ -97,7 +97,7 @@ internal static class SingleSolver
         switch (choice)
         {
             case ExitChoice.SaveSolution:
-                PersistenceManager.WriteProblemFile(day, problem, ProblemFile.MainOutput, newMainOutput!);
+                PersistenceManager.WriteProblemFile(day, problem, ProblemFile.PuzzleAnswer, newPuzzleAnswer!);
                 break;
             case ExitChoice.Exit:
                 Environment.Exit(0);
@@ -113,15 +113,15 @@ internal static class SingleSolver
         string tag,
         StatusContext context,
         string input,
-        string? expectedOutput)
+        string? expectedAnswer)
     {
         context.Status($"Solving {tag} problem");
 
         var logger = new TaggedSolutionLogger(tag);
         var stopwatch = Stopwatch.StartNew();
-        var output = entry.Solve(problem, new ProblemInput(input), logger);
+        var answer = entry.Solve(problem, new ProblemInput(input), logger);
 
-        if (output is null)
+        if (answer is null)
         {
             logger.Log("No solution");
             return null;
@@ -131,26 +131,26 @@ internal static class SingleSolver
         logger.Log($"Finished in {elapsedTime}");
 
         AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine(output);
+        AnsiConsole.WriteLine(answer);
         AnsiConsole.WriteLine();
 
-        if (expectedOutput is not null)
+        if (expectedAnswer is not null)
         {
-            var correct = Verification.VerifyOutput(output, expectedOutput);
+            var correct = AnswerVerification.Check(answer, expectedAnswer);
 
             if (correct)
             {
-                logger.Log("Solution is correct", Color.Green);
+                logger.Log("Answer is correct", Color.Green);
             }
             else
             {
-                logger.Log("Solution is incorrect", Color.Red);
+                logger.Log("Answer is incorrect", Color.Red);
             }
 
             AnsiConsole.WriteLine();
         }
 
-        return output;
+        return answer;
     }
 
     private enum ExitChoice
