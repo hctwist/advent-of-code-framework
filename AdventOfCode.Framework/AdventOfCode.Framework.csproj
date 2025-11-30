@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <RootNamespace>AdventOfCode.Framework</RootNamespace>
+
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+
+        <WarningsAsErrors>all</WarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>AdventOfCode.Framework</PackageId>
+        <Title>Advent of Code Framework</Title>
+        <Authors>Henry Twist</Authors>
+        <Description>Simple framework to bootstrap Advent of Code solutions.</Description>
+        <PackageProjectUrl>https://github.com/hctwist/advent-of-code-framework</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/hctwist/advent-of-code-framework</RepositoryUrl>
+        <PackageVersion>2.0.0</PackageVersion>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="/"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Humanizer.Core" Version="3.0.1"/>
+        <PackageReference Include="Spectre.Console" Version="0.54.0"/>
+    </ItemGroup>
+
+</Project>

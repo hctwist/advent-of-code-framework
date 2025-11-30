@@ -1,140 +1,53 @@
+[![NuGet version](https://img.shields.io/nuget/v/AdventOfCode.Framework.svg?style=flat-square)](https://www.nuget.org/packages/AdventOfCode.Framework/)
+
 # Advent of Code Framework
 
-Simple framework to bootstrap Advent of Code solutions.
+C# framework to interactively bootstrap Advent of Code solutions.
 
-## Modes
-The framework supports two run modes:
+# Getting Started
 
-### Solve Mode
-Runs solutions and outputs the result from the problems.
+The entry point to the framework is the `AdventOfCodeRunner`. From here you can either run in a full interactive mode
+via `AdventOfCodeRunner.Run` or specify fixed options via methods like `AdventOfCodeRunner.Solve`. Solutions setup as
+in [Solutions](#solutions) will be picked up automatically, but the runner will guide through this.
 
-### Benchmark Mode
-Benchmarks solution problems.
+![Sample](Images/InteractiveConsole.png)
 
-## Setting Up Solutions
+# Solutions
 
-A solution needs to satisfy four constrains: inheriting from `Solution`, having a constructor which takes in a single parameter of type `Input`, having a single `Solution` attribute, and having at least one `SolutionInput` attribute.
-
-A solution should then look something like this:
+A `Solution` represents the logic to solve both problems for a particular puzzle day. Solutions should both implement
+`ISolution` and be attributed with `SolutionAttribute` as follows:
 
 ```csharp
-using AdventOfCode.Framework;
-
-[Solution(1)]
-[SolutionInput("Input.txt")]
-public class MySolution : Solution
+[Solution(Day = 1)]
+internal class SampleSolution : ISolution
 {
-    public MySolution(Input input) : base(input)
+    /// <inheritdoc />
+    public string SolveProblem1(ProblemInput input, ISolutionLogger logger)
     {
+        ...
     }
 
-    protected override string? Problem1()
+    /// <inheritdoc />
+    public string SolveProblem2(ProblemInput input, ISolutionLogger logger)
     {
-        return null;
-    }
-
-    protected override string? Problem2()
-    {
-        return null;
+        ...
     }
 }
 ```
 
-The solutions to the problems should be returned from `Problem1` and `Problem2` as strings.
+# Inputs and Outputs
 
-## Running
-The entry point to the framework is the `SolutionRunner`.
-```csharp
-SolutionRunner runner = new();
-```
+When a problem is run for the first time, input and output files need to be provided. These are prompted for via Notepad
+by the runner, and the user is expected to save and exit Notepad to continue (similar to command line Git). Initially
+required files are the input and output of the example part of the problem, plus the input of the main problem (the file
+will indicate the data expected).
 
-You can then run the solution runner directly in one of the two modes and for a specific combination of days/problems.
-```csharp
-// Solve mode
-runner.Solve(1, Problem.Problem2);
-runner.Solve(1);
-runner.SolveLatest();
-runner.SolveAll();
+After running the solution to the main problem the option will be given to save the output.
 
-// Benchmark mode
-runner.Benchmark(1, Problem.Problem2);
-runner.Benchmark(1);
-runner.BenchmarkAll();
-```
+Inputs and outputs will be persisted at `%LocalAppData%\Advent of Code` and can be edited there if they require
+updating.
 
-There is also an option intended to work with the command line:
+# Logging
 
-```csharp
-runner.Run(args);
-```
-
-The arguments passed to `Run` can define the two modes as follows:
-```
-run <day> [problem]
-benchmark <day> <problem>
-```
-for example:
-```csharp
-runner.Run(new string[] { "run", "1", "1" });
-```
-*Note that `SolveLatest` is not supported with run arguments.*
-
-## Input
-
-Input is read by the framework and can be accessed in the solution via the `Input` property (or directly in the constructor). The input can be read in lines, or as a raw input string.
-
-```csharp
-protected override string? Problem1()
-{
-    string[] lines = Input.Lines;
-    string raw = Input.Raw;
-}
-```
-
-## Solution Options
-
-### Solution Attribute
-
-The solution attribute takes in the day that the solution corresponds to, and optionally whether the solution is enabled.
-
-```csharp
-[Solution(1, Enabled = true)]
-```
-
-### Solution Input Attribute
-
-The solution input attribute takes in a path to an input file to run the solution for. This is by default resolved from the base directory of the project but this can be changed via the `SolutionRunner` options.
-
-Optional properties can be set to enable/disable the input, specify that the input is only relevant to a single problem and enable benchmarking.
-
-```csharp
-[SolutionInput("Input.txt", Enabled = true, Benchmark = true, Problem = Problem.All)
-```
-
-Solutions to the problems can also be added which will allow incorrect runs to be marked in the solution output.
-```csharp
-[SolutionInput("Input.txt", Problem1Solution = "X", Problem2Solution = "X")
-```
-
-*Note that in benchmark mode, only inputs marked with `Benchmark = true` will be considered. This is `false` by default.*
-
-## Notes
-
-### Process
-
-Each *problem* run instantiates a new solution, so state can't be shared between runs.
-Benchmarking includes the runtime of the constructor as well as the specific problem, however it doesn't include reading input files.
-
-### Disabling Problems
-
-A problem that returns `null` is not considered as being a non-atttempt and therefore will not contribute to the benchmarks, or stop the current run.
-
-### Solve Output
-
-When running in Solve Mode, the output gives an approximate run time along with the problem result. If the result is known to be correct or incorrect, it will be highlighted in green and red respectively. If the result is not know, but two solutions provide different results for the the same problem, then these will be considered inconsistent and marked in yellow.
-
-*Note that the runtime is approximate, and doesn't take into account any overhead. To measure a problem accurately, run in Benchmark Mode.*
-
-### Pitfalls
-
-Input file paths should be specified relative to the output directory (or usually relative to the project root). For this to work the files need to be setup to copy over when building (https://social.technet.microsoft.com/wiki/contents/articles/53248.visual-studio-copying-files-to-debug-or-release-folder.aspx).
+Due to the interactive nature of the runner, writing to the console directly has undefined behaviour. To log in
+solutions a logger is passed in which is compatible with the interactive console.
