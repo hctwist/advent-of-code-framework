@@ -54,8 +54,7 @@ internal static class MultiSolver
 
         clearableRegion.Clear();
 
-        var correctColumnName = "Correct";
-        var table = new Table().AddColumns("Day", "Problem", correctColumnName, "Elapsed time");
+        var table = new Table().AddColumns("Day", "Problem", "Result", "Elapsed time");
 
         foreach (var result in results)
         {
@@ -63,13 +62,11 @@ internal static class MultiSolver
             table.AddRow(
                 new Text(result.Day.ToString()),
                 new Text(result.Problem.Humanize()),
-                CreateResult(result.Result.Correct, correctColumnName.Length),
+                CreateResultRenderable(result.Result.Correct),
                 new Text(result.Result.ElapsedTime.ToString()));
         }
 
         AnsiConsole.Write(table);
-
-        System.Console.ReadKey();
     }
 
     private static ProblemResult? SolveProblem(
@@ -106,22 +103,14 @@ internal static class MultiSolver
         return new ProblemResult(elapsedTime, correct);
     }
 
-    private static IRenderable CreateResult(bool? result, int width)
+    private static IRenderable CreateResultRenderable(bool? result)
     {
-        var canvas = new Canvas(width, 1);
-        var color = result switch
+        return result switch
         {
-            true => Color.Green,
-            false => Color.Red,
-            null => Color.Grey
+            true => new Text("  Correct  ", new Style(background: Color.Green)),
+            false => new Text(" Incorrect ", new Style(background: Color.Red)),
+            null => new Text("  Unknown  ", new Style(background: Color.Grey))
         };
-
-        for (var i = 0; i < width; i++)
-        {
-            canvas.SetPixel(i, 0, color);
-        }
-
-        return canvas;
     }
 
     private record SolutionTask(ProgressTask Progress, SolutionEntry SolutionEntry);

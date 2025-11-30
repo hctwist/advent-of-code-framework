@@ -12,14 +12,13 @@ internal class TaggedSolutionLogger : ISolutionLogger
     }
 
     /// <inheritdoc />
-    public void Log(string message)
+    public void Log(string message, Color? color = null)
     {
-        AnsiConsole.MarkupLine($"{tagMarkup}{Markup.Escape(message)}");
-    }
+        var colorMarkup = color?.ToMarkup();
 
-    /// <inheritdoc />
-    public void LogError(string message)
-    {
-        AnsiConsole.MarkupLine($"{tagMarkup}[red]{Markup.Escape(message)}[/red]");
+        AnsiConsole.MarkupLine(
+            colorMarkup is not null ?
+                $"{tagMarkup}[{colorMarkup}]{Markup.Escape(message)}[/]" :
+                $"{tagMarkup}{Markup.Escape(message)}");
     }
 }

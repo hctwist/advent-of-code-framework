@@ -46,8 +46,6 @@ public static class AdventOfCodeRunner
                 .Header("Example")
                 .Padding(3, 1);
             AnsiConsole.Write(panel);
-
-            System.Console.ReadKey();
             return;
         }
 
@@ -71,6 +69,7 @@ public static class AdventOfCodeRunner
                 break;
             case RunnerOption.Solve:
                 SingleSolver.Solve();
+                System.Console.ReadKey();
                 break;
             case RunnerOption.SolveAll:
                 SolveAll();
@@ -86,13 +85,15 @@ public static class AdventOfCodeRunner
     /// </summary>
     public static void Rerun()
     {
-        if (!PersistenceManager.TryReadLastRunFile(out var lastRun))
+        if (PersistenceManager.TryReadLastRunFile(out var lastRun))
+        {
+            Solve(lastRun.Day, lastRun.Problem);
+        }
+        else
         {
             AnsiConsole.WriteErrorLine("Could not find a previous run");
-            return;
+            System.Console.ReadKey();
         }
-
-        Solve(lastRun.Day, lastRun.Problem);
     }
 
     /// <summary>
@@ -103,6 +104,7 @@ public static class AdventOfCodeRunner
     public static void Solve(int day, Problem problem)
     {
         SingleSolver.Solve(day, problem);
+        System.Console.ReadKey();
     }
 
     /// <summary>
@@ -111,6 +113,7 @@ public static class AdventOfCodeRunner
     public static void SolveAll()
     {
         MultiSolver.SolveAll();
+        System.Console.ReadKey();
     }
 
     private static void OpenProblemData()

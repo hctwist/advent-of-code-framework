@@ -40,7 +40,6 @@ internal static class SingleSolver
         {
             case 0:
                 AnsiConsole.WriteErrorLine($"Could not find solution for day {day}");
-                System.Console.ReadKey();
                 return;
             case > 1:
                 AnsiConsole.WriteErrorLine($"Found more than one solution type for day {day}:");
@@ -101,6 +100,7 @@ internal static class SingleSolver
                 PersistenceManager.WriteProblemFile(day, problem, ProblemFile.MainOutput, newMainOutput!);
                 break;
             case ExitChoice.Exit:
+                Environment.Exit(0);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -138,7 +138,15 @@ internal static class SingleSolver
         {
             var correct = Verification.VerifyOutput(output, expectedOutput);
 
-            AnsiConsole.MarkupLine(correct ? "[green]Solution is correct[/]" : "[red]Solution is incorrect[/]");
+            if (correct)
+            {
+                logger.Log("Solution is correct", Color.Green);
+            }
+            else
+            {
+                logger.Log("Solution is incorrect", Color.Red);
+            }
+
             AnsiConsole.WriteLine();
         }
 
