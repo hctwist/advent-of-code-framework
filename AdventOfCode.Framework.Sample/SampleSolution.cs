@@ -6,11 +6,6 @@ namespace AdventOfCode.Framework.Sample;
 [Solution(Day = 1)]
 internal class SampleSolution : ISolution
 {
-    public SampleSolution(int x)
-    {
-
-    }
-
     /// <inheritdoc />
     public string SolveProblem1(ProblemInput input, ISolutionLogger logger)
     {
