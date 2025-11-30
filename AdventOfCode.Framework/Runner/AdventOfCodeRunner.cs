@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Framework.Console;
+﻿using System.Diagnostics;
+using AdventOfCode.Framework.Console;
 using AdventOfCode.Framework.Persistence;
 using AdventOfCode.Framework.Solutions;
 using AdventOfCode.Framework.Solvers;
@@ -52,6 +53,7 @@ public static class AdventOfCodeRunner
 
         runnerOptions.Add(RunnerOption.Solve);
         runnerOptions.Add(RunnerOption.SolveAll);
+        runnerOptions.Add(RunnerOption.OpenProblemData);
 
         var runnerOption = AnsiConsole.Prompt(
             new SelectionPrompt<RunnerOption>()
@@ -62,27 +64,20 @@ public static class AdventOfCodeRunner
                 })
                 .AddChoices(runnerOptions));
 
-        if (runnerOption == RunnerOption.Rerun)
+        switch (runnerOption)
         {
-            Rerun();
-        }
-        else if (runnerOption == RunnerOption.Solve)
-        {
-            var days = SolutionFinder.Entries.OrderBy(e => e.Solved).ThenBy(e => e.Day).Select(e => e.Day);
-            var day = AnsiConsole.Prompt(new SelectionPrompt<int>().AddChoices(days).EnableSearch().UseConverter(c => $"Day {c}"));
-
-            var problem = AnsiConsole.Prompt(
-                new SelectionPrompt<Problem>()
-                    .UseHumanizerConverter()
-                    .AddChoices(Enum.GetValues<Problem>()));
-
-            PersistenceManager.WriteLastRunFile(new LastRun(day, problem));
-
-            Solve(day, problem);
-        }
-        else if (runnerOption == RunnerOption.SolveAll)
-        {
-            SolveAll();
+            case RunnerOption.Rerun:
+                Rerun();
+                break;
+            case RunnerOption.Solve:
+                SingleSolver.Solve();
+                break;
+            case RunnerOption.SolveAll:
+                SolveAll();
+                break;
+            case RunnerOption.OpenProblemData:
+                OpenProblemData();
+                break;
         }
     }
 
@@ -116,5 +111,16 @@ public static class AdventOfCodeRunner
     public static void SolveAll()
     {
         MultiSolver.SolveAll();
+    }
+
+    private static void OpenProblemData()
+    {
+        Directory.CreateDirectory(PersistenceManager.ProblemDataDirectory);
+        Process.Start(
+            new ProcessStartInfo()
+            {
+                FileName = PersistenceManager.ProblemDataDirectory,
+                UseShellExecute = true
+            });
     }
 }

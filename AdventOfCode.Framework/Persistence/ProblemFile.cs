@@ -2,8 +2,8 @@
 
 internal enum ProblemFile
 {
-    SampleInput,
-    SampleOutput,
+    ExampleInput,
+    ExampleOutput,
     MainInput,
     MainOutput
 }

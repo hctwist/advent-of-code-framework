@@ -39,8 +39,8 @@ internal class SampleSolution : ISolution
 
 When a problem is run for the first time, input and output files need to be provided. These are prompted for via Notepad
 by the runner, and the user is expected to save and exit Notepad to continue (similar to command line Git). Initially
-required files are the input and output of the sample part of the problem, plus the input of the main problem (the file
-title will indicate the data expected).
+required files are the input and output of the example part of the problem, plus the input of the main problem (the file
+will indicate the data expected).
 
 After running the solution to the main problem the option will be given to save the output.
 

@@ -10,6 +10,8 @@ internal static class PersistenceManager
     private static readonly string FolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Advent of Code");
     private static readonly string LastRunPath = Path.Combine(FolderPath, "Last Run.json");
 
+    public static string ProblemDataDirectory { get; } = Path.Combine(FolderPath, "Problem Data");
+
     internal static void WriteLastRunFile(LastRun lastRun)
     {
         File.WriteAllText(LastRunPath, JsonSerializer.Serialize(lastRun));
@@ -31,7 +33,8 @@ internal static class PersistenceManager
         int day,
         Problem problem,
         ProblemFile file,
-        [NotNullWhen(true)] out string? contents)
+        [NotNullWhen(true)]
+        out string? contents)
     {
         var path = GetProblemFilePath(day, problem, file);
 
@@ -45,35 +48,52 @@ internal static class PersistenceManager
         return true;
     }
 
-    internal static string ReadOrPromptForProblemFile(int day, Problem problem, ProblemFile file)
+    internal static bool TryReadOrPromptForProblemFile(
+        int day,
+        Problem problem,
+        ProblemFile file,
+        [NotNullWhen(true)]
+        out string? contents)
     {
         var path = GetProblemFilePath(day, problem, file);
 
         if (File.Exists(path))
         {
-            var contents = File.ReadAllText(path);
+            contents = File.ReadAllText(path);
+            return true;
+        }
 
-            if (!string.IsNullOrWhiteSpace(contents))
-            {
-                return contents;
-            }
-        }
-        else
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            File.Create(path).Dispose();
-        }
+        var temporaryPath = GetTemporaryProblemFilePath(file);
+
+        var startingContents =
+            $"""
+             Place the <{file.Humanize(LetterCasing.LowerCase)}> to <day {day}> <{problem.Humanize(LetterCasing.LowerCase)}> here and close the window when finished.
+
+             This will be saved for next time the problem is run.
+             """;
+
+        File.WriteAllText(temporaryPath, startingContents);
 
         var process = Process.Start(
             new ProcessStartInfo
             {
                 FileName = "notepad.exe",
-                Arguments = $"\"{path}\""
+                Arguments = $"\"{temporaryPath}\""
             });
 
         process!.WaitForExit();
 
-        return File.ReadAllText(path);
+        contents = File.ReadAllText(temporaryPath);
+
+        if (contents == startingContents)
+        {
+            File.Delete(temporaryPath);
+            return false;
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.Move(temporaryPath, path);
+        return true;
     }
 
     internal static void WriteProblemFile(
@@ -85,8 +105,13 @@ internal static class PersistenceManager
         File.WriteAllText(GetProblemFilePath(day, problem, file), contents);
     }
 
+    private static string GetTemporaryProblemFilePath(ProblemFile file)
+    {
+        return Path.ChangeExtension(Path.Combine(Path.GetTempPath(), $"{file.Humanize(LetterCasing.Title)} {Guid.NewGuid()}"), "txt");
+    }
+
     private static string GetProblemFilePath(int day, Problem problem, ProblemFile file)
     {
-        return Path.ChangeExtension(Path.Combine(FolderPath, "Problem Data", $"Day {day}", problem.Humanize(), file.Humanize(LetterCasing.Title)), "txt");
+        return Path.ChangeExtension(Path.Combine(ProblemDataDirectory, $"Day {day}", problem.Humanize(), file.Humanize(LetterCasing.Title)), "txt");
     }
 }

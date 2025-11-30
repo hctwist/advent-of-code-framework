@@ -4,5 +4,6 @@ internal enum RunnerOption
 {
     Rerun,
     Solve,
-    SolveAll
+    SolveAll,
+    OpenProblemData
 }

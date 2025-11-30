@@ -9,6 +9,21 @@ namespace AdventOfCode.Framework.Solvers;
 
 internal static class SingleSolver
 {
+    internal static void Solve()
+    {
+        var days = SolutionFinder.Entries.OrderBy(e => e.Solved).ThenBy(e => e.Day).Select(e => e.Day);
+        var day = AnsiConsole.Prompt(new SelectionPrompt<int>().AddChoices(days).EnableSearch().UseConverter(c => $"Day {c}"));
+
+        var problem = AnsiConsole.Prompt(
+            new SelectionPrompt<Problem>()
+                .UseHumanizerConverter()
+                .AddChoices(Enum.GetValues<Problem>()));
+
+        PersistenceManager.WriteLastRunFile(new LastRun(day, problem));
+
+        Solve(day, problem);
+    }
+
     internal static void Solve(int day, Problem problem)
     {
         var table = new Table();
@@ -35,9 +50,24 @@ internal static class SingleSolver
 
         var solutionEntry = solutionEntries.Single();
 
-        var sampleInput = PersistenceManager.ReadOrPromptForProblemFile(day, problem, ProblemFile.SampleInput);
-        var sampleOutput = PersistenceManager.ReadOrPromptForProblemFile(day, problem, ProblemFile.SampleOutput);
-        var mainInput = PersistenceManager.ReadOrPromptForProblemFile(day, problem, ProblemFile.MainInput);
+        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.ExampleInput, out var exampleInput))
+        {
+            AnsiConsole.WriteErrorLine("Didn't receive any example input");
+            return;
+        }
+
+        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.ExampleOutput, out var exampleOutput))
+        {
+            AnsiConsole.WriteErrorLine("Didn't receive any example output");
+            return;
+        }
+
+        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.MainInput, out var mainInput))
+        {
+            AnsiConsole.WriteErrorLine("Didn't receive any main input");
+            return;
+        }
+
         var mainOutput = PersistenceManager.TryReadProblemFile(day, problem, ProblemFile.MainOutput, out var o) ? o : null;
 
         string? newMainOutput = null;
@@ -47,7 +77,7 @@ internal static class SingleSolver
                 "-",
                 c =>
                 {
-                    SolveProblem(solutionEntry, problem, "sample", c, sampleInput, sampleOutput);
+                    SolveProblem(solutionEntry, problem, "example", c, exampleInput, exampleOutput);
                     newMainOutput = SolveProblem(solutionEntry, problem, "main", c, mainInput, mainOutput);
                 });
 
