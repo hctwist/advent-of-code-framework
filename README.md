@@ -35,6 +35,25 @@ internal class SampleSolution : ISolution
 }
 ```
 
+The solution attribute can also be used to enable/disable a solution and mark it as solved to deprioritize it in lists.
+
+## Problems
+
+Each solution has a 'solve' method for each problem, which can return a string output of the problem, or null if the
+problem has not been solved.
+
+Both the problem input and a logger are passed to the solve methods. The problem input can be consumed as either the
+raw string, the input lines or a matrix (if the input is of fixed width and height):
+
+```csharp
+var inputRaw = input.Raw;
+var inputLines = input.Lines;
+var inputMatrix = input.Matrix;
+```
+
+Due to the interactive nature of the runner, writing to the console directly has undefined behaviour, whereas the logger
+is compatible with the interactive console.
+
 # Inputs and Outputs
 
 When a problem is run for the first time, input and output files need to be provided. These are prompted for via Notepad
@@ -46,8 +65,3 @@ After running the solution to the main problem the option will be given to save 
 
 Inputs and outputs will be persisted at `%LocalAppData%\Advent of Code` and can be edited there if they require
 updating.
-
-# Logging
-
-Due to the interactive nature of the runner, writing to the console directly has undefined behaviour. To log in
-solutions a logger is passed in which is compatible with the interactive console.

@@ -1,4 +1,5 @@
 ﻿using AdventOfCode.Framework.Solutions;
+using Spectre.Console;
 
 namespace AdventOfCode.Framework.Sample;
 
@@ -8,8 +9,11 @@ internal class SampleSolution : ISolution
     /// <inheritdoc />
     public string SolveProblem1(ProblemInput input, ISolutionLogger logger)
     {
+        logger.Log("Starting problem");
         Thread.Sleep(2_000);
-        return "fhjksdfhjsk";
+        var matrix = input.Matrix;
+        logger.Log("Finished problem", Color.Green);
+        return matrix.Count.ToString();
     }
 
     /// <inheritdoc />
