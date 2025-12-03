@@ -76,6 +76,32 @@ public class ImmutableMatrix<T> : IEnumerable<MatrixCell<T>>
     }
 
     /// <summary>
+    /// Gets cells in a single row of the matrix.
+    /// </summary>
+    /// <param name="row">The row index.</param>
+    /// <returns>The cells in row <paramref name="row"/>.</returns>
+    public IEnumerable<MatrixCell<T>> GetRow(int row)
+    {
+        for (var column = 0; column < Columns; column++)
+        {
+            yield return this[row, column];
+        }
+    }
+
+    /// <summary>
+    /// Gets cells in a single column of the matrix.
+    /// </summary>
+    /// <param name="column">The column index.</param>
+    /// <returns>The cells in column <paramref name="column"/>.</returns>
+    public IEnumerable<MatrixCell<T>> GetColumn(int column)
+    {
+        for (var row = 0; row < Rows; row++)
+        {
+            yield return this[row, column];
+        }
+    }
+
+    /// <summary>
     /// Creates a new matrix with each element selected from the original.
     /// </summary>
     /// <param name="selector">The selector.</param>

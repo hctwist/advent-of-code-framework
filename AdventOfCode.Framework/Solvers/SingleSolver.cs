@@ -11,7 +11,7 @@ internal static class SingleSolver
 {
     internal static void Solve()
     {
-        var days = SolutionFinder.Entries.OrderBy(e => e.Solved).ThenBy(e => e.Day).Select(e => e.Day);
+        var days = SolutionFinder.Entries.OrderBy(e => e.Solved).ThenByDescending(e => e.Day).Select(e => e.Day);
         var day = AnsiConsole.Prompt(new SelectionPrompt<int>().AddChoices(days).EnableSearch().UseConverter(c => $"Day {c}"));
 
         var problem = AnsiConsole.Prompt(
@@ -49,25 +49,25 @@ internal static class SingleSolver
 
         var solutionEntry = solutionEntries.Single();
 
-        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.ExampleInput, out var exampleInput))
+        if (!PersistenceManager.TryReadOrPromptForProblemInputFile(day, ProblemDataFlavour.Example, out var exampleInput))
         {
             AnsiConsole.WriteErrorLine("No example input was written to the file");
             return;
         }
 
-        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.ExampleAnswer, out var exampleAnswer))
+        if (!PersistenceManager.TryReadOrPromptForProblemAnswerFile(day, problem, ProblemDataFlavour.Example, out var exampleAnswer))
         {
             AnsiConsole.WriteErrorLine("No example answer was written to the file");
             return;
         }
 
-        if (!PersistenceManager.TryReadOrPromptForProblemFile(day, problem, ProblemFile.PuzzleInput, out var puzzleInput))
+        if (!PersistenceManager.TryReadOrPromptForProblemInputFile(day, ProblemDataFlavour.Puzzle, out var puzzleInput))
         {
             AnsiConsole.WriteErrorLine("No puzzle input was written to the file");
             return;
         }
 
-        var puzzleAnswer = PersistenceManager.TryReadProblemFile(day, problem, ProblemFile.PuzzleAnswer, out var o) ? o : null;
+        var puzzleAnswer = PersistenceManager.TryReadProblemAnswerFile(day, problem, ProblemDataFlavour.Puzzle, out var o) ? o : null;
 
         string? newPuzzleAnswer = null;
 
@@ -97,7 +97,7 @@ internal static class SingleSolver
         switch (choice)
         {
             case ExitChoice.SaveSolution:
-                PersistenceManager.WriteProblemFile(day, problem, ProblemFile.PuzzleAnswer, newPuzzleAnswer!);
+                PersistenceManager.WriteProblemAnswerFile(day, problem, ProblemDataFlavour.Puzzle, newPuzzleAnswer!);
                 break;
             case ExitChoice.Exit:
                 Environment.Exit(0);

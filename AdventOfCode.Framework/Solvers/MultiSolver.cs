@@ -34,7 +34,7 @@ internal static class MultiSolver
 
                 foreach (var task in tasks)
                 {
-                    var problem1Result = SolveProblem(task.SolutionEntry, Problem.Problem1, ProblemFile.PuzzleInput, ProblemFile.PuzzleAnswer);
+                    var problem1Result = SolveProblem(task.SolutionEntry, Problem.Problem1);
                     task.Progress.Value(1);
 
                     if (problem1Result is not null)
@@ -42,7 +42,7 @@ internal static class MultiSolver
                         results.Add(new TaggedProblemResult(task.SolutionEntry.Day, Problem.Problem1, problem1Result));
                     }
 
-                    var problem2Result = SolveProblem(task.SolutionEntry, Problem.Problem2, ProblemFile.PuzzleInput, ProblemFile.PuzzleAnswer);
+                    var problem2Result = SolveProblem(task.SolutionEntry, Problem.Problem2);
                     task.Progress.Value(2);
 
                     if (problem2Result is not null)
@@ -75,13 +75,9 @@ internal static class MultiSolver
         AnsiConsole.Write(table);
     }
 
-    private static ProblemResult? SolveProblem(
-        SolutionEntry entry,
-        Problem problem,
-        ProblemFile inputFile,
-        ProblemFile answerFile)
+    private static ProblemResult? SolveProblem(SolutionEntry entry, Problem problem)
     {
-        if (!PersistenceManager.TryReadProblemFile(entry.Day, problem, inputFile, out var input))
+        if (!PersistenceManager.TryReadProblemInputFile(entry.Day, ProblemDataFlavour.Puzzle, out var input))
         {
             return null;
         }
@@ -97,7 +93,7 @@ internal static class MultiSolver
 
         bool? correct;
 
-        if (!PersistenceManager.TryReadProblemFile(entry.Day, problem, answerFile, out var expectedAnswer))
+        if (!PersistenceManager.TryReadProblemAnswerFile(entry.Day, problem, ProblemDataFlavour.Puzzle, out var expectedAnswer))
         {
             correct = null;
         }
