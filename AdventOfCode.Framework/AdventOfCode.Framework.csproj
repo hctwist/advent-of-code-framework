@@ -18,7 +18,7 @@
         <Description>Simple framework to bootstrap Advent of Code solutions.</Description>
         <PackageProjectUrl>https://github.com/hctwist/advent-of-code-framework</PackageProjectUrl>
         <RepositoryUrl>https://github.com/hctwist/advent-of-code-framework</RepositoryUrl>
-        <PackageVersion>2.5.0</PackageVersion>
+        <PackageVersion>2.5.2</PackageVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>

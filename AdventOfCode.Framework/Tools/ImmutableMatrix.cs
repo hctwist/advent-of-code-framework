@@ -2,6 +2,7 @@
 
 namespace AdventOfCode.Framework.Tools;
 
+// TODO Allow mutable matrix that you can modify elements in. Have IReadOnlyMatrix for the readonly part
 /// <summary>
 /// An immutable matrix.
 /// </summary>
@@ -61,7 +62,7 @@ public class ImmutableMatrix<T> : IEnumerable<MatrixCell<T>>
     /// <returns>True if the indices are in bounds, false otherwise.</returns>
     public bool IsWithinBounds(int row, int column)
     {
-        return row < Rows && column < Columns;
+        return (0 <= row && row < Rows) && (0 <= column && column < Columns);
     }
 
     /// <summary>
@@ -145,7 +146,7 @@ public class ImmutableMatrix<T> : IEnumerable<MatrixCell<T>>
         {
             this.matrix = matrix;
             row = 0;
-            column = 0;
+            column = -1;
         }
 
         /// <inheritdoc />
