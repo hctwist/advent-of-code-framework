@@ -37,6 +37,16 @@ public readonly struct MatrixCell<T>
     }
 
     /// <summary>
+    /// Extracts the value of a cell.
+    /// </summary>
+    /// <param name="cell">The cell.</param>
+    /// <returns>The cell's value.</returns>
+    public static implicit operator T(MatrixCell<T> cell)
+    {
+        return cell.Value;
+    }
+
+    /// <summary>
     /// Gets the cell to the top of this one in the matrix, or null if it is out of bounds.
     /// </summary>
     public MatrixCell<T>? Top => Offset(-1, 0);
