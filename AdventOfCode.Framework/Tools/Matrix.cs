@@ -3,22 +3,56 @@
 namespace AdventOfCode.Framework.Tools;
 
 /// <summary>
-/// An immutable matrix.
+/// A matrix.
 /// </summary>
 /// <typeparam name="T">The element type.</typeparam>
-public class ImmutableMatrix<T> : IEnumerable<MatrixCell<T>>
+public class Matrix<T> : IReadOnlyMatrix<T>
 {
     private readonly T[,] data;
 
     /// <summary>
-    /// Creates a new <see cref="ImmutableMatrix{T}"/>.
+    /// Creates a new <see cref="Matrix{T}"/>
     /// </summary>
-    /// <param name="data">The data.</param>
-    public ImmutableMatrix(T[,] data) : this(data, true)
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value to fill the matrix with.</param>
+    public Matrix(int rows, int columns, T value)
+    {
+        data = new T[rows, columns];
+        for (var row = 0; row < rows; row++)
+        {
+            for (var column = 0; column < columns; column++)
+            {
+                data[row, column] = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Matrix{T}"/>.
+    /// </summary>
+    /// <param name="data">The data. This will be copied.</param>
+    public Matrix(T[,] data) : this(data, true)
     {
     }
 
-    private ImmutableMatrix(T[,] data, bool copy)
+    /// <summary>
+    /// Creates a new <see cref="Matrix{T}"/>.
+    /// </summary>
+    /// <param name="matrix">The source matrix. This will be copied.</param>
+    public Matrix(IReadOnlyMatrix<T> matrix)
+    {
+        data = new T[matrix.Rows, matrix.Columns];
+        for (var row = 0; row < matrix.Rows; row++)
+        {
+            for (var column = 0; column < matrix.Columns; column++)
+            {
+                data[row, column] = matrix[row, column];
+            }
+        }
+    }
+
+    private Matrix(T[,] data, bool copy)
     {
         if (copy)
         {
@@ -31,62 +65,45 @@ public class ImmutableMatrix<T> : IEnumerable<MatrixCell<T>>
         }
     }
 
-    /// <summary>
-    /// Gets the row count of the matrix.
-    /// </summary>
+    /// <inheritdoc/>
     public int Rows => data.GetLength(0);
 
-    /// <summary>
-    /// Gets the column count of the matrix.
-    /// </summary>
+    /// <inheritdoc/>
     public int Columns => data.GetLength(1);
 
-    /// <summary>
-    /// Gets the total element count of the matrix.
-    /// </summary>
+    /// <inheritdoc/>
     public int Count => data.Length;
 
-    /// <summary>
-    /// Gets a cell from the matrix.
-    /// </summary>
-    /// <param name="row">The row index.</param>
-    /// <param name="column">The column index.</param>
+    /// <inheritdoc/>
     public MatrixCell<T> this[int row, int column] => new(row, column, data[row, column], this);
 
-    /// <summary>
-    /// Gets a cell from the matrix.
-    /// </summary>
-    /// <param name="row">The row index.</param>
-    /// <param name="column">The column index.</param>
+    /// <inheritdoc/>
     public MatrixCell<T> this[Index row, Index column] => this[row.GetOffset(Rows), column.GetOffset(Columns)];
 
     /// <summary>
-    /// Determines whether a row and column index are within bounds of the matrix.
+    /// Sets a value in the matrix.
     /// </summary>
     /// <param name="row">The row index.</param>
     /// <param name="column">The column index.</param>
-    /// <returns>True if the indices are in bounds, false otherwise.</returns>
+    /// <param name="value">The value to set.</param>
+    public void Set(int row, int column, T value)
+    {
+        data[row, column] = value;
+    }
+
+    /// <inheritdoc/>
     public bool IsWithinBounds(int row, int column)
     {
         return (0 <= row && row < Rows) && (0 <= column && column < Columns);
     }
 
-    /// <summary>
-    /// Gets a cell from the matrix, or null if the indices are out of bounds.
-    /// </summary>
-    /// <param name="row">The row index.</param>
-    /// <param name="column">The column index.</param>
-    /// <returns>The matrix cell, or null if the indices are out of bounds.</returns>
+    /// <inheritdoc/>
     public MatrixCell<T>? GetOrDefault(int row, int column)
     {
         return IsWithinBounds(row, column) ? this[row, column] : null;
     }
 
-    /// <summary>
-    /// Gets cells in a single row of the matrix.
-    /// </summary>
-    /// <param name="row">The row index.</param>
-    /// <returns>The cells in row <paramref name="row"/>.</returns>
+    /// <inheritdoc/>
     public IEnumerable<MatrixCell<T>> GetRow(int row)
     {
         for (var column = 0; column < Columns; column++)
@@ -95,38 +112,13 @@ public class ImmutableMatrix<T> : IEnumerable<MatrixCell<T>>
         }
     }
 
-    /// <summary>
-    /// Gets cells in a single column of the matrix.
-    /// </summary>
-    /// <param name="column">The column index.</param>
-    /// <returns>The cells in column <paramref name="column"/>.</returns>
+    /// <inheritdoc/>
     public IEnumerable<MatrixCell<T>> GetColumn(int column)
     {
         for (var row = 0; row < Rows; row++)
         {
             yield return this[row, column];
         }
-    }
-
-    /// <summary>
-    /// Creates a new matrix with each element selected from the original.
-    /// </summary>
-    /// <param name="selector">The selector.</param>
-    /// <typeparam name="TResult">The result type.</typeparam>
-    /// <returns>The resulting matrix.</returns>
-    public ImmutableMatrix<TResult> Select<TResult>(Func<T, TResult> selector)
-    {
-        var newData = new TResult[Rows, Columns];
-
-        for (var r = 0; r < Rows; r++)
-        {
-            for (var c = 0; c < Columns; c++)
-            {
-                newData[r, c] = selector(data[r, c]);
-            }
-        }
-
-        return new ImmutableMatrix<TResult>(newData, false);
     }
 
     /// <inheritdoc />
@@ -143,12 +135,12 @@ public class ImmutableMatrix<T> : IEnumerable<MatrixCell<T>>
 
     private struct Enumerator : IEnumerator<MatrixCell<T>>
     {
-        private readonly ImmutableMatrix<T> matrix;
+        private readonly Matrix<T> matrix;
 
         private int row;
         private int column;
 
-        public Enumerator(ImmutableMatrix<T> matrix)
+        public Enumerator(Matrix<T> matrix)
         {
             this.matrix = matrix;
             row = 0;

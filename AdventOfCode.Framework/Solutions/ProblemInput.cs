@@ -13,13 +13,13 @@ public class ProblemInput
     public string Raw { get; }
 
     private readonly Lazy<IReadOnlyList<string>> lines;
-    private readonly Lazy<ImmutableMatrix<char>> matrix;
+    private readonly Lazy<IReadOnlyMatrix<char>> matrix;
 
     internal ProblemInput(string raw)
     {
         Raw = raw;
         lines = new Lazy<IReadOnlyList<string>>(() => raw.Split(["\n", "\r\n"], StringSplitOptions.None));
-        matrix = new Lazy<ImmutableMatrix<char>>(BuildMatrix);
+        matrix = new Lazy<IReadOnlyMatrix<char>>(() => BuildMatrix(Lines));
     }
 
     /// <summary>
@@ -30,23 +30,18 @@ public class ProblemInput
     /// <summary>
     /// Gets the input as a matrix.
     /// </summary>
-    public ImmutableMatrix<char> Matrix => matrix.Value;
+    public IReadOnlyMatrix<char> Matrix => matrix.Value;
 
-    private ImmutableMatrix<char> BuildMatrix()
+    private static Matrix<char> BuildMatrix(IReadOnlyList<string> lines)
     {
-        if (Lines.Count == 0)
+        var rowCount = lines.Count;
+        var columnCount = lines[0].Length;
+
+        var matrix = new Matrix<char>(rowCount, columnCount, default);
+
+        for (var r = 0; r < lines.Count; r++)
         {
-            return new ImmutableMatrix<char>(new char[0, 0]);
-        }
-
-        var rowCount = Lines.Count;
-        var columnCount = Lines[0].Length;
-
-        var data = new char[rowCount, columnCount];
-
-        for (var r = 0; r < Lines.Count; r++)
-        {
-            var line = Lines[r];
+            var line = lines[r];
 
             if (line.Length != columnCount)
             {
@@ -55,10 +50,10 @@ public class ProblemInput
 
             for (var c = 0; c < line.Length; c++)
             {
-                data[r, c] = line[c];
+                matrix.Set(r, c, line[c]);
             }
         }
 
-        return new ImmutableMatrix<char>(data);
+        return matrix;
     }
 }

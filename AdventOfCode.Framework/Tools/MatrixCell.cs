@@ -21,13 +21,13 @@ public readonly struct MatrixCell<T>
     /// </summary>
     public T Value { get; }
 
-    private readonly ImmutableMatrix<T> sourceMatrix;
+    private readonly IReadOnlyMatrix<T> sourceMatrix;
 
     internal MatrixCell(
         int row,
         int column,
         T value,
-        ImmutableMatrix<T> sourceMatrix)
+        IReadOnlyMatrix<T> sourceMatrix)
     {
         Row = row;
         Column = column;
