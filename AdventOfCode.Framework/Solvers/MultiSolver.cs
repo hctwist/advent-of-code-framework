@@ -14,8 +14,6 @@ internal static class MultiSolver
     {
         var results = new List<TaggedProblemResult>();
 
-        var clearableRegion = ClearableRegion.Start();
-
         AnsiConsole.Progress()
             .Columns(
                 new TaskDescriptionColumn(),
@@ -28,14 +26,16 @@ internal static class MultiSolver
 
                 foreach (var entry in SolutionFinder.Entries.OrderBy(e => e.Day))
                 {
-                    var task = c.AddTask($"Day {entry.Day}").MaxValue(2);
+                    var task = c.AddTask($"Day {entry.Day}", false).MaxValue(2);
                     tasks.Add(new SolutionTask(task, entry));
                 }
 
                 foreach (var task in tasks)
                 {
+                    task.ProgressTask.StartTask();
+
                     var problem1Result = SolveProblem(task.SolutionEntry, Problem.Problem1);
-                    task.Progress.Value(1);
+                    task.ProgressTask.Value(1);
 
                     if (problem1Result is not null)
                     {
@@ -43,18 +43,16 @@ internal static class MultiSolver
                     }
 
                     var problem2Result = SolveProblem(task.SolutionEntry, Problem.Problem2);
-                    task.Progress.Value(2);
+                    task.ProgressTask.Value(2);
 
                     if (problem2Result is not null)
                     {
                         results.Add(new TaggedProblemResult(task.SolutionEntry.Day, Problem.Problem2, problem2Result));
                     }
 
-                    task.Progress.StopTask();
+                    task.ProgressTask.StopTask();
                 }
             });
-
-        clearableRegion.Clear();
 
         if (results.Count == 0)
         {
@@ -66,7 +64,6 @@ internal static class MultiSolver
 
         foreach (var result in results)
         {
-            AnsiConsole.WriteLine();
             table.AddRow(
                 new Text(result.Day.ToString()),
                 new Text(result.Problem.Humanize()),
@@ -117,7 +114,7 @@ internal static class MultiSolver
         };
     }
 
-    private record SolutionTask(ProgressTask Progress, SolutionEntry SolutionEntry);
+    private record SolutionTask(ProgressTask ProgressTask, SolutionEntry SolutionEntry);
 
     private record ProblemResult(TimeSpan ElapsedTime, bool? Correct);
 

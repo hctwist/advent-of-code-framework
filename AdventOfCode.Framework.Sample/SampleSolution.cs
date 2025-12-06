@@ -19,6 +19,6 @@ internal class SampleSolution : ISolution
     /// <inheritdoc />
     public string SolveProblem2(ProblemInput input, ISolutionLogger logger)
     {
-        throw new NotImplementedException();
+        return "-";
     }
 }
