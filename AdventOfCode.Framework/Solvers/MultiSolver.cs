@@ -49,6 +49,8 @@ internal static class MultiSolver
                     {
                         results.Add(new TaggedProblemResult(task.SolutionEntry.Day, Problem.Problem2, problem2Result));
                     }
+
+                    task.Progress.StopTask();
                 }
             });
 
